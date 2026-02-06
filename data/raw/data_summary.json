@@ -1,0 +1,28 @@
+{
+  "generation_timestamp": "2026-02-06T23:22:10.212669",
+  "data_summary": {
+    "total_products": 50,
+    "total_sales_transactions": 5512,
+    "total_revenue": 609523.1799999999,
+    "unique_skus": 50,
+    "categories": [
+      "Health & Beauty",
+      "Books & Media",
+      "Home & Garden",
+      "Clothing",
+      "Electronics",
+      "Toys & Games",
+      "Food & Beverages",
+      "Sports & Outdoors"
+    ],
+    "date_range_days": 89,
+    "avg_daily_revenue": 6772.4797777777785,
+    "top_products_by_revenue": {
+      "41": 51448.42,
+      "42": 44170.560000000005,
+      "44": 39113.66,
+      "31": 37049.22,
+      "7": 36612.12
+    }
+  }
+}
