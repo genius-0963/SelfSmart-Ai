@@ -75,12 +75,12 @@ export default function Copilot() {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b p-4">
+      <div className="bg-card border-b border-border p-4">
         <div className="flex items-center space-x-3">
-          <Bot className="w-6 h-6 text-blue-600" />
+          <Bot className="w-6 h-6 text-green-400" />
           <div>
-            <h1 className="text-lg font-semibold text-gray-900">AI Copilot</h1>
-            <p className="text-sm text-gray-500">Your intelligent retail assistant</p>
+            <h1 className="text-lg font-semibold text-foreground">AI Copilot</h1>
+            <p className="text-sm text-muted-foreground">Your intelligent retail assistant</p>
           </div>
         </div>
       </div>
@@ -96,7 +96,7 @@ export default function Copilot() {
               message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''
             }`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                message.type === 'user' ? 'bg-blue-600' : 'bg-green-600'
+                message.type === 'user' ? 'bg-green-500' : 'bg-gray-800'
               }`}>
                 {message.type === 'user' ? (
                   <User className="w-5 h-5 text-white" />
@@ -106,12 +106,12 @@ export default function Copilot() {
               </div>
               <div className={`rounded-lg p-3 ${
                 message.type === 'user' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-100 text-gray-900'
+                  ? 'bg-green-500/15 text-green-100 border border-green-500/20' 
+                  : 'bg-card text-foreground border border-border'
               }`}>
                 <p className="text-sm">{message.content}</p>
                 <p className={`text-xs mt-1 ${
-                  message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
+                  message.type === 'user' ? 'text-green-200/70' : 'text-muted-foreground'
                 }`}>
                   {message.timestamp.toLocaleTimeString()}
                 </p>
@@ -123,10 +123,10 @@ export default function Copilot() {
         {loading && (
           <div className="flex justify-start">
             <div className="flex items-start space-x-2">
-              <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center">
                 <Bot className="w-5 h-5 text-white" />
               </div>
-              <div className="bg-gray-100 rounded-lg p-3">
+              <div className="bg-card border border-border rounded-lg p-3">
                 <div className="flex space-x-1">
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
@@ -141,25 +141,25 @@ export default function Copilot() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white border-t p-4">
+      <div className="bg-card border-t border-border p-4">
         <div className="flex flex-wrap gap-2 mb-3">
           <button
             onClick={() => setInput('Show me inventory alerts')}
-            className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full flex items-center space-x-1"
+            className="px-3 py-1 text-sm bg-gray-900 hover:bg-gray-800 border border-border rounded-full flex items-center space-x-1 text-foreground"
           >
             <Lightbulb className="w-3 h-3" />
             <span>Inventory Alerts</span>
           </button>
           <button
             onClick={() => setInput('What\'s my revenue trend?')}
-            className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full flex items-center space-x-1"
+            className="px-3 py-1 text-sm bg-gray-900 hover:bg-gray-800 border border-border rounded-full flex items-center space-x-1 text-foreground"
           >
             <MessageCircle className="w-3 h-3" />
             <span>Revenue Trend</span>
           </button>
           <button
             onClick={() => setInput('Which products should I reorder?')}
-            className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full flex items-center space-x-1"
+            className="px-3 py-1 text-sm bg-gray-900 hover:bg-gray-800 border border-border rounded-full flex items-center space-x-1 text-foreground"
           >
             <Lightbulb className="w-3 h-3" />
             <span>Reorder Suggestions</span>
@@ -174,13 +174,13 @@ export default function Copilot() {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Ask me anything about your retail business..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border border-border bg-background text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             disabled={loading}
           />
           <button
             onClick={handleSend}
             disabled={loading || !input.trim()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            className="px-4 py-2 bg-green-600 text-black rounded-lg hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
           >
             <Send className="w-4 h-4" />
             <span>Send</span>

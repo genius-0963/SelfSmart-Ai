@@ -27,25 +27,25 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 94.1%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 96%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 142 72% 45%;
+    --primary-foreground: 0 0% 6%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 92%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 92%;
+    --destructive: 0 75% 45%;
+    --destructive-foreground: 0 0% 96%;
+    --border: 0 0% 16%;
+    --input: 0 0% 16%;
+    --ring: 142 72% 45%;
   }
 }
 
@@ -65,15 +65,15 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100;
+  @apply bg-gray-900;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 rounded-full;
+  @apply bg-gray-700 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400;
+  @apply bg-gray-600;
 }
 
 /* Chart animations */
@@ -87,7 +87,7 @@
 
 /* Loading animations */
 .loading-spinner {
-  @apply animate-spin rounded-full border-2 border-gray-300 border-t-blue-600;
+  @apply animate-spin rounded-full border-2 border-gray-700 border-t-green-500;
 }
 
 /* Card hover effects */
@@ -101,11 +101,11 @@
 
 /* Gradient backgrounds */
 .gradient-bg {
-  @apply bg-gradient-to-br from-blue-50 to-indigo-100;
+  @apply bg-gradient-to-br from-black to-gray-950;
 }
 
 .gradient-text {
-  @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-green-400 to-emerald-300 bg-clip-text text-transparent;
 }
 
 /* Status indicators */
@@ -123,11 +123,11 @@
 
 /* Button animations */
 .btn-primary {
-  @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  @apply bg-green-600 hover:bg-green-500 text-black font-medium py-2 px-4 rounded-lg transition-colors duration-200;
 }
 
 .btn-secondary {
-  @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  @apply bg-gray-900 hover:bg-gray-800 text-gray-100 font-medium py-2 px-4 rounded-lg transition-colors duration-200 border border-gray-700;
 }
 
 /* Responsive grid */
@@ -155,15 +155,15 @@
 
 /* Metric cards */
 .metric-card {
-  @apply bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow duration-200;
+  @apply bg-card text-card-foreground rounded-lg border border-border p-6 hover:border-green-500/40 transition-colors duration-200;
 }
 
 .metric-value {
-  @apply text-2xl font-bold text-gray-900;
+  @apply text-2xl font-bold text-foreground;
 }
 
 .metric-label {
-  @apply text-sm font-medium text-gray-500;
+  @apply text-sm font-medium text-muted-foreground;
 }
 
 .metric-change {

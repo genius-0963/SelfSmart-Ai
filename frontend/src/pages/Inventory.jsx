@@ -45,8 +45,8 @@ export default function Inventory() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Inventory Management</h1>
-          <p className="text-gray-600">Monitor and manage your product inventory</p>
+          <h1 className="text-2xl font-bold text-foreground">Inventory Management</h1>
+          <p className="text-muted-foreground">Monitor and manage your product inventory</p>
         </div>
         <div className="flex space-x-2">
           <button className="btn-secondary flex items-center space-x-2">
@@ -63,21 +63,21 @@ export default function Inventory() {
       {/* Alerts */}
       {alerts.length > 0 && (
         <div className="space-y-2">
-          <h2 className="text-lg font-semibold text-gray-900">Active Alerts</h2>
+          <h2 className="text-lg font-semibold text-foreground">Active Alerts</h2>
           {alerts.map(alert => (
             <div key={alert.id} className={`p-4 rounded-lg border ${
-              alert.severity === 'critical' ? 'bg-red-50 border-red-200' : 'bg-yellow-50 border-yellow-200'
+              alert.severity === 'critical' ? 'bg-red-500/10 border-red-500/20' : 'bg-yellow-500/10 border-yellow-500/20'
             }`}>
               <div className="flex items-center space-x-3">
                 <AlertTriangle className={`w-5 h-5 ${
-                  alert.severity === 'critical' ? 'text-red-600' : 'text-yellow-600'
+                  alert.severity === 'critical' ? 'text-red-300' : 'text-yellow-300'
                 }`} />
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">{alert.product}</p>
-                  <p className="text-sm text-gray-600">{alert.message}</p>
+                  <p className="font-medium text-foreground">{alert.product}</p>
+                  <p className="text-sm text-muted-foreground">{alert.message}</p>
                 </div>
                 <span className={`px-2 py-1 text-xs font-medium rounded ${
-                  alert.severity === 'critical' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                  alert.severity === 'critical' ? 'bg-red-500/15 text-red-200 border border-red-500/20' : 'bg-yellow-500/15 text-yellow-200 border border-yellow-500/20'
                 }`}>
                   {alert.severity}
                 </span>
@@ -88,15 +88,15 @@ export default function Inventory() {
       )}
 
       {/* Inventory Table */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="p-4 border-b border-gray-200">
+      <div className="bg-card border border-border rounded-lg overflow-hidden">
+        <div className="p-4 border-b border-border">
           <div className="flex items-center space-x-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search products..."
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full"
+                className="pl-10 pr-4 py-2 border border-border bg-background text-foreground rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
             <button className="btn-secondary flex items-center space-x-2">
@@ -107,8 +107,8 @@ export default function Inventory() {
         </div>
         
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-border">
+            <thead className="bg-gray-950">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Product
@@ -130,43 +130,43 @@ export default function Inventory() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-card divide-y divide-border">
               {inventory.map(item => (
-                <tr key={item.id} className="hover:bg-gray-50">
+                <tr key={item.id} className="hover:bg-gray-900">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <Package className="w-5 h-5 text-gray-400 mr-3" />
-                      <span className="font-medium text-gray-900">{item.name}</span>
+                      <span className="font-medium text-foreground">{item.name}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                     {item.sku}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`font-medium ${
-                      item.stock === 0 ? 'text-red-600' : 
-                      item.stock < item.optimal * 0.3 ? 'text-yellow-600' : 
-                      'text-green-600'
+                      item.stock === 0 ? 'text-red-300' : 
+                      item.stock < item.optimal * 0.3 ? 'text-yellow-300' : 
+                      'text-green-300'
                     }`}>
                       {item.stock}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                     {item.optimal}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs font-medium rounded ${
-                      item.status === 'optimal' ? 'bg-green-100 text-green-800' :
-                      item.status === 'low' ? 'bg-yellow-100 text-yellow-800' :
-                      item.status === 'out' ? 'bg-red-100 text-red-800' :
-                      'bg-blue-100 text-blue-800'
+                      item.status === 'optimal' ? 'bg-green-500/15 text-green-200 border border-green-500/20' :
+                      item.status === 'low' ? 'bg-yellow-500/15 text-yellow-200 border border-yellow-500/20' :
+                      item.status === 'out' ? 'bg-red-500/15 text-red-200 border border-red-500/20' :
+                      'bg-blue-500/15 text-blue-200 border border-blue-500/20'
                     }`}>
                       {item.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-blue-600 hover:text-blue-900 mr-3">Reorder</button>
-                    <button className="text-gray-600 hover:text-gray-900">Details</button>
+                    <button className="text-green-400 hover:text-green-300 mr-3">Reorder</button>
+                    <button className="text-muted-foreground hover:text-foreground">Details</button>
                   </td>
                 </tr>
               ))}

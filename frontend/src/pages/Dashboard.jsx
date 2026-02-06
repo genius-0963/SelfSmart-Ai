@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 import MetricCard from '../components/MetricCard'
 import RevenueChart from '../components/RevenueChart'
- InventoryAlerts from '../components/InventoryAlerts'
+import InventoryAlerts from '../components/InventoryAlerts'
 import TopProducts from '../components/TopProducts'
 import QuickActions from '../components/QuickActions'
 
@@ -47,8 +47,8 @@ export default function Dashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">Welcome to SmartShelf AI - Your intelligent retail analytics platform</p>
+        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground">Welcome to SmartShelf AI - Your intelligent retail analytics platform</p>
       </div>
 
       {/* Metrics Grid */}
@@ -94,14 +94,14 @@ export default function Dashboard() {
       {/* Charts and Tables */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Revenue Chart */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h2>
+        <div className="bg-card border border-border p-6 rounded-lg">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Revenue Trend</h2>
           <RevenueChart />
         </div>
 
         {/* Top Products */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Products</h2>
+        <div className="bg-card border border-border p-6 rounded-lg">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Top Products</h2>
           <TopProducts />
         </div>
       </div>
@@ -120,23 +120,23 @@ export default function Dashboard() {
       </div>
 
       {/* AI Insights */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
+      <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/5 p-6 rounded-lg border border-green-500/20">
         <div className="flex items-center space-x-3 mb-4">
-          <Brain className="w-6 h-6 text-blue-600" />
-          <h2 className="text-lg font-semibold text-gray-900">AI Insights</h2>
+          <Brain className="w-6 h-6 text-green-400" />
+          <h2 className="text-lg font-semibold text-foreground">AI Insights</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg">
-            <p className="text-sm text-gray-600 mb-1">Demand Forecast</p>
-            <p className="font-medium text-gray-900">15% increase expected next month</p>
+          <div className="bg-card border border-border p-4 rounded-lg">
+            <p className="text-sm text-muted-foreground mb-1">Demand Forecast</p>
+            <p className="font-medium text-foreground">15% increase expected next month</p>
           </div>
-          <div className="bg-white p-4 rounded-lg">
-            <p className="text-sm text-gray-600 mb-1">Pricing Opportunity</p>
-            <p className="font-medium text-gray-900">8 products need price adjustments</p>
+          <div className="bg-card border border-border p-4 rounded-lg">
+            <p className="text-sm text-muted-foreground mb-1">Pricing Opportunity</p>
+            <p className="font-medium text-foreground">8 products need price adjustments</p>
           </div>
-          <div className="bg-white p-4 rounded-lg">
-            <p className="text-sm text-gray-600 mb-1">Inventory Health</p>
-            <p className="font-medium text-gray-900">87% optimal stock levels</p>
+          <div className="bg-card border border-border p-4 rounded-lg">
+            <p className="text-sm text-muted-foreground mb-1">Inventory Health</p>
+            <p className="font-medium text-foreground">87% optimal stock levels</p>
           </div>
         </div>
       </div>

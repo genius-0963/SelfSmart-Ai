@@ -26,19 +26,34 @@ A hackathon-winning AI retail intelligence platform that helps small retailers m
 ## Quick Start
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
-npm install
+# One-time setup (creates venv, installs deps, generates data, initializes DB)
+./scripts/setup.sh
 
-# Start backend
-cd backend && uvicorn main:app --reload
-
-# Start frontend
-cd frontend && npm start
-
-# Generate sample data
-python data_pipeline/generate_data.py
+# Start all services (backend:8000, copilot:8001, frontend:3000)
+./scripts/dev.sh
 ```
+
+### Manual run (if you prefer separate terminals)
+
+```bash
+# Backend API
+python3 -m uvicorn backend.app.main:app --reload --port 8000
+
+# Copilot service
+python3 -m uvicorn copilot_chatbot.main:app --reload --port 8001
+
+# Frontend
+cd frontend
+npm install
+npm run dev
+```
+
+### URLs
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
+- **Copilot API**: http://localhost:8001
 
 ## Features
 

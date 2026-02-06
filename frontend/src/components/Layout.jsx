@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
-import { Outlet } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Header from './Header'
 
-export default function Layout() {
+export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
@@ -19,7 +18,7 @@ export default function Layout() {
       )}
 
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform lg:translate-x-0 lg:static lg:inset-0 sidebar-transition">
+      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border shadow-lg transform lg:translate-x-0 lg:static lg:inset-0 sidebar-transition">
         <Sidebar onClose={() => setSidebarOpen(false)} />
       </div>
 
@@ -30,7 +29,7 @@ export default function Layout() {
         
         {/* Page content */}
         <main className="flex-1 p-6">
-          <Outlet />
+          {children}
         </main>
       </div>
     </div>

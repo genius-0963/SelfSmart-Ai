@@ -21,19 +21,19 @@ export default function MetricCard({ title, value, change, trend, icon: Icon, fo
   }
 
   const getTrendColor = () => {
-    if (trend === 'up') return 'text-green-600'
+    if (trend === 'up') return 'text-green-400'
     if (trend === 'down') return 'text-red-600'
-    return 'text-gray-600'
+    return 'text-muted-foreground'
   }
 
   const getIconColor = () => {
     const colors = {
-      green: 'text-green-600 bg-green-100',
-      blue: 'text-blue-600 bg-blue-100',
-      purple: 'text-purple-600 bg-purple-100',
-      red: 'text-red-600 bg-red-100',
+      green: 'text-green-300 bg-green-500/10 border border-green-500/20',
+      blue: 'text-green-300 bg-green-500/10 border border-green-500/20',
+      purple: 'text-green-300 bg-green-500/10 border border-green-500/20',
+      red: 'text-red-300 bg-red-500/10 border border-red-500/20',
     }
-    return colors[color] || 'text-gray-600 bg-gray-100'
+    return colors[color] || 'text-muted-foreground bg-gray-500/10 border border-border'
   }
 
   return (
@@ -52,7 +52,7 @@ export default function MetricCard({ title, value, change, trend, icon: Icon, fo
           {getTrendIcon()}
           {Math.abs(change)}%
         </span>
-        <span className="text-sm text-gray-500 ml-2">vs last period</span>
+        <span className="text-sm text-muted-foreground ml-2">vs last period</span>
       </div>
     </div>
   )
