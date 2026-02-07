@@ -24,6 +24,13 @@
 - **RAG-Powered Intelligence**: Context-aware responses with real business data
 - **Multi-LLM Support**: OpenAI GPT-4 and Anthropic Claude integration
 - **Real-time Insights**: Stream responses in <500ms
+#### 🧠 Advanced NLP Capabilities
+  - **Intent Recognition & Entity Extraction**: Understands products, categories, time ranges, metrics, and comparisons
+  - **Sentiment Analysis**: Aspect-level sentiment for customer reviews (price, quality, freshness, packaging, service, availability)
+  - **Semantic Product Search**: Embedding-powered search across catalog and knowledge base
+  - **Multilingual Support**: Language detection and translation for global retailers
+  - **Natural Language Reporting**: Auto-generate insight narratives from structured data
+  - **Competitor Intelligence**: Web scraping and market positioning analysis
 
 ### 📊 Demand Forecasting - Predict the Future
 - **Ensemble Models**: Prophet + LSTM + XGBoost achieving 89.3% accuracy
@@ -160,6 +167,10 @@ npm run build
 | **API Documentation** | http://localhost:8000/docs | Interactive docs |
 | **AI Copilot** | http://localhost:8001 | Chat service |
 | **Health Check** | http://localhost:8000/health | System status |
+| **NLP Parse** | http://localhost:8000/api/v1/nlp/parse | Intent/entity parsing |
+| **Sentiment** | http://localhost:8000/api/v1/nlp/sentiment | Review sentiment analysis |
+| **Semantic Search** | http://localhost:8000/api/v1/nlp/search | Product semantic search |
+| **Competitors** | http://localhost:8000/api/v1/competitors | Scrape & market analysis |
 
 ---
 
@@ -201,12 +212,20 @@ AI: "Sales are down 15% due to stockouts on Tuesday and Wednesday.
      The top 3 products were out of stock, causing $2,300 in lost revenue. 
      Recommend increasing safety stock by 20% for these items."
 
-User: "How should I adjust prices for the holiday season?"
-AI: "Based on historical data and competitor analysis, I recommend:
-     • Electronics: +5% (high demand, low elasticity)
-     • Clothing: +10% (seasonal peak)
-     • Home goods: +3% (moderate demand)
-     Expected revenue impact: +$4,500 for the month."
+User: "How are customers feeling about our organic milk?"
+AI: "Analyzing 1,247 recent reviews for organic milk:
+     • Overall sentiment: 72% positive, 18% neutral, 10% negative
+     • Key positives: freshness (89%), taste (82%), packaging (76%)
+     • Main complaints: price (15%), availability (8%), occasional quality (5%)
+     • Recommendation: Highlight freshness in marketing; consider bundle pricing to address price sensitivity."
+
+User: "Show me products similar to 'Artisan Sourdough Bread'"
+AI: "Found 4 semantic matches:
+     • Whole Grain Sourdough (92% similarity) - $5.99
+     • Organic Rye Bread (87% similarity) - $6.49
+     • Gluten-Free Artisan Loaf (81% similarity) - $7.99
+     • Traditional Baguette (78% similarity) - $4.99
+     All items currently in stock with above-average margins."
 ```
 
 ---
@@ -258,7 +277,13 @@ smartshelf-ai/
 ├── 📁 copilot_chatbot/        # AI Copilot service
 │   ├── 🐍 main.py             # Copilot API
 │   ├── 📁 rag/                # RAG pipeline
-│   └── 📁 llm/                # LLM integration
+│   ├── 📁 llm/                # LLM integration
+│   └── 📁 nlp/                # NLP modules (intent, sentiment, semantic, multilingual)
+│       ├── 🧠 intent_engine.py
+│       ├── 💬 sentiment_analyzer.py
+│       ├── 🔍 semantic_search.py
+│       ├── 🌐 multilingual.py
+│       └── 📄 report_generator.py
 ├── 📁 ml_models/              # Machine learning models
 │   ├── 📁 forecasting/        # Time series models
 │   ├── 📁 pricing/            # Pricing optimization
@@ -295,6 +320,8 @@ smartshelf-ai/
 - **XGBoost** - Gradient boosting for tabular data
 - **ChromaDB** - Vector database for embeddings
 - **OpenAI/Anthropic** - Large language models
+- **spaCy + Transformers** - Advanced NLP (NER, sentiment, semantic search)
+- **Sentence-Transformers** - Product semantic embeddings
 
 ---
 
@@ -531,6 +558,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] Advanced analytics suite
 - [ ] Multi-store management
 - [ ] API marketplace
+- [x] **Advanced NLP capabilities** (intent, sentiment, semantic search, multilingual)
+- [x] **Customer review ingestion & sentiment analysis**
+- [x] **Competitor intelligence scraping & market positioning**
 
 ### Version 3.0 (Q2 2024)
 - [ ] Computer vision integration
