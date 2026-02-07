@@ -13,7 +13,9 @@ from datetime import datetime, timedelta
 import os
 
 # Database configuration
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./data/database/smartshelf.db")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+DATABASE_PATH = os.path.join(BASE_DIR, "data", "database", "smartshelf.db")
+DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DATABASE_PATH}")
 
 # Create database engine
 engine = create_engine(
@@ -289,8 +291,8 @@ class ChatSession(Base):
     id = Column(Integer, primary_key=True, index=True)
     session_id = Column(String(100), unique=True, index=True, nullable=False)
     user_id = Column(String(100), index=True)  # For future multi-user support
-    created_date = Column(DateTime, default=datetime.utcnow, index=True)
-    last_activity = Column(DateTime, default=datetime.utcnow, index=True)
+    created_date = Column(DateTime, default=lambda: datetime.utcnow().replace(microsecond=0), index=True)
+    last_activity = Column(DateTime, default=lambda: datetime.utcnow().replace(microsecond=0), index=True)
     session_metadata = Column(Text)  # JSON of session context
     is_active = Column(Boolean, default=True, index=True)
 
@@ -309,7 +311,7 @@ class ChatMessage(Base):
     tokens_used = Column(Integer)
     response_time_ms = Column(Integer)
     user_feedback = Column(Integer)  # 1-5 rating
-    created_date = Column(DateTime, default=datetime.utcnow, index=True)
+    created_date = Column(DateTime, default=lambda: datetime.utcnow().replace(microsecond=0), index=True)
     
     # Performance indexes
     __table_args__ = (

@@ -5,6 +5,7 @@ AI Copilot-related Pydantic models for API validation.
 from pydantic import BaseModel, Field, validator
 from typing import Optional, List, Dict, Any, Union
 from datetime import datetime
+from enum import Enum
 
 
 class MessageType(str, Enum):
@@ -300,7 +301,3 @@ class CopilotInsight(BaseModel):
     
     generated_at: datetime
     expires_at: Optional[datetime] = None
-
-
-# Import Enum for MessageType
-from enum import Enum

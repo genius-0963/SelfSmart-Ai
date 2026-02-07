@@ -45,7 +45,7 @@ async def chat_with_copilot(
             session = ChatSession(
                 session_id=session_id,
                 user_id="demo_user",  # In production, get from auth
-                session_metadata={"source": "api"}
+                session_metadata='{"source": "api"}'  # Convert dict to JSON string
             )
             db.add(session)
             db.commit()
@@ -70,8 +70,8 @@ async def chat_with_copilot(
             session_id=session.session_id,
             message_type="assistant",
             message_content=ai_response["response"],
-            message_data=ai_response.get("data"),
-            context_used=ai_response.get("context_sources", []),
+            message_data=str(ai_response.get("data", {})),  # Convert to string
+            context_used=str(ai_response.get("context_sources", [])),  # Convert to string
             model_used="demo_model",
             tokens_used=len(ai_response["response"].split()),
             response_time_ms=150  # Mock response time
