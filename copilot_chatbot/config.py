@@ -6,7 +6,7 @@ Configuration settings for the AI Copilot service.
 
 import os
 from typing import Dict, Any
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class VectorStoreConfig(BaseSettings):

@@ -33,13 +33,13 @@ class SentimentAnalyzer:
     def __init__(self, model_name: str = "cardiffnlp/twitter-roberta-base-sentiment-latest"):
         self.model_name = model_name
         self.classifier = None
+        self._model_loaded = False
 
+        # Don't load model immediately to speed up startup
         if TRANSFORMERS_AVAILABLE:
-            try:
-                self.classifier = pipeline("sentiment-analysis", model=model_name)
-                logger.info(f"Sentiment model loaded: {model_name}")
-            except Exception as e:
-                logger.warning(f"Failed to load sentiment model ({model_name}): {e}")
+            logger.info(f"Sentiment analyzer initialized. Model will be loaded on first use: {model_name}")
+        else:
+            logger.warning("Transformers not available for sentiment analysis")
 
         self.aspect_keywords = {
             "price": ["price", "expensive", "cheap", "cost", "overpriced", "value"],
@@ -99,10 +99,24 @@ class SentimentAnalyzer:
 
         return result
 
+    def _load_model_if_needed(self):
+        """Load the sentiment model on first use."""
+        if not self._model_loaded and TRANSFORMERS_AVAILABLE:
+            try:
+                self.classifier = pipeline("sentiment-analysis", model=self.model_name)
+                self._model_loaded = True
+                logger.info(f"Sentiment model loaded: {self.model_name}")
+            except Exception as e:
+                logger.warning(f"Failed to load sentiment model ({self.model_name}): {e}")
+                self._model_loaded = True  # Don't try again
+
     def _analyze_single(self, text: str) -> Dict[str, Any]:
         text = (text or "").strip()
         if not text:
             return {"label": "neutral", "score": 0.0}
+
+        # Load model on first use
+        self._load_model_if_needed()
 
         if self.classifier:
             try:
