@@ -66,6 +66,20 @@ class RAGConfig(BaseSettings):
         env_prefix = "RAG_"
 
 
+class ProductSuggestionConfig(BaseSettings):
+    """Product suggestion system configuration."""
+    
+    embeddings_path: str = "data/amazon_product_embeddings"
+    model_name: str = "all-MiniLM-L6-v2"
+    similarity_threshold: float = 0.3
+    max_recommendations: int = 10
+    enable_cache: bool = True
+    cache_ttl: int = 3600  # 1 hour
+    
+    class Config:
+        env_prefix = "PRODUCT_SUGGESTION_"
+
+
 class CopilotConfig(BaseSettings):
     """Main copilot configuration."""
     
@@ -78,6 +92,7 @@ class CopilotConfig(BaseSettings):
     vector_store: VectorStoreConfig = VectorStoreConfig()
     llm: LLMConfig = LLMConfig()
     rag: RAGConfig = RAGConfig()
+    product_suggestion: ProductSuggestionConfig = ProductSuggestionConfig()
     
     class Config:
         env_prefix = "COPILOT_"
