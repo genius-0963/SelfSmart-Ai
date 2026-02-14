@@ -1,7 +1,7 @@
 """
-SmartShelf AI - AI Copilot Service
+SmartShelf AI - AI Chat Service
 
-Main service for the AI-powered conversational assistant with RAG pipeline.
+Simplified chat service with 4 core endpoints for global deployment.
 """
 
 import asyncio
@@ -10,6 +10,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import time
+from typing import Optional
 
 from .rag.pipeline import RAGPipeline
 from .llm.openai_client import OpenAIClient
@@ -27,7 +28,7 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """Application lifespan manager."""
     # Startup
-    logger.info("🤖 Starting SmartShelf AI Copilot Service...")
+    logger.info("🤖 Starting SmartShelf AI Chat Service...")
     
     try:
         # Initialize components
@@ -69,32 +70,32 @@ async def lifespan(app: FastAPI):
             await rag_pipeline.build_index()
             logger.info("✅ Document index built")
         
-        logger.info("🎉 SmartShelf AI Copilot Service started successfully!")
+        logger.info("🎉 SmartShelf AI Chat Service started successfully!")
         
     except Exception as e:
-        logger.error(f"❌ Failed to start Copilot service: {e}")
+        logger.error(f"❌ Failed to start Chat service: {e}")
         raise
     
     yield
     
     # Shutdown
-    logger.info("🛑 Shutting down SmartShelf AI Copilot Service...")
+    logger.info("🛑 Shutting down SmartShelf AI Chat Service...")
 
 
 # Create FastAPI application
 app = FastAPI(
-    title="SmartShelf AI Copilot Service",
-    description="AI-powered conversational assistant with RAG for retail decision support",
+    title="SmartShelf AI Chat Service",
+    description="AI-powered conversational assistant with RAG",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan
 )
 
-# Configure CORS
+# Configure CORS for global access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:8000"],
+    allow_origins=["*"],  # Allow all origins for global access
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -105,14 +106,14 @@ app.add_middleware(
 async def root():
     """Root endpoint."""
     return {
-        "service": "SmartShelf AI Copilot",
+        "service": "SmartShelf AI Chat",
         "version": "1.0.0",
         "status": "operational",
-        "features": [
-            "🔍 Context-aware search",
-            "💬 Intelligent conversation",
-            "📊 Business insights",
-            "🎯 Decision support"
+        "endpoints": [
+            "/chat - Basic chat functionality",
+            "/products/chat - Chat with product suggestions", 
+            "/search - Context search",
+            "/health - Service health check"
         ]
     }
 
@@ -143,7 +144,7 @@ async def health_check():
 
 
 @app.post("/chat")
-async def chat(query: str, session_id: str = None):
+async def chat(query: str, session_id: Optional[str] = None):
     """
     Chat with the AI Copilot.
     
@@ -197,170 +198,8 @@ async def search_context(query: str, max_results: int = 5):
         raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
 
 
-@app.post("/index/documents")
-async def index_documents():
-    """Build or rebuild the document index."""
-    try:
-        if not hasattr(app.state, 'rag_pipeline'):
-            raise HTTPException(status_code=503, detail="RAG pipeline not ready")
-        
-        await app.state.rag_pipeline.build_index()
-        
-        return {"message": "Document index built successfully"}
-        
-    except Exception as e:
-        logger.error(f"Index building failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Index building failed: {str(e)}")
-
-
-@app.get("/stats")
-async def get_service_stats():
-    """Get service statistics."""
-    try:
-        stats = {}
-        
-        if hasattr(app.state, 'vector_store'):
-            stats["vector_store"] = await app.state.vector_store.get_stats()
-        
-        if hasattr(app.state, 'rag_pipeline'):
-            stats["rag_pipeline"] = await app.state.rag_pipeline.get_stats()
-        
-        if hasattr(app.state, 'product_recommender'):
-            stats["product_suggestion"] = app.state.product_recommender.get_stats()
-        
-        return stats
-        
-    except Exception as e:
-        logger.error(f"Failed to get stats: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get statistics")
-
-
-@app.post("/products/suggest")
-async def suggest_products(query: str, max_results: int = 10):
-    """
-    Get product suggestions based on query.
-    
-    Args:
-        query: Search query for products
-        max_results: Maximum number of suggestions to return
-        
-    Returns:
-        List of product recommendations
-    """
-    try:
-        if not hasattr(app.state, 'product_recommender'):
-            raise HTTPException(status_code=503, detail="Product suggestion system not ready")
-        
-        recommendations = app.state.product_recommender.find_similar_products(query, max_results)
-        
-        return {
-            "query": query,
-            "recommendations": [rec.__dict__ for rec in recommendations],
-            "total_found": len(recommendations)
-        }
-        
-    except Exception as e:
-        logger.error(f"Product suggestion failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Product suggestion failed: {str(e)}")
-
-
-@app.post("/products/similar/{product_id}")
-async def get_similar_products(product_id: str, max_results: int = 10):
-    """
-    Get products similar to a specific Amazon product.
-    
-    Args:
-        product_id: Amazon product ID
-        max_results: Maximum number of similar products
-        
-    Returns:
-        List of similar product recommendations
-    """
-    try:
-        if not hasattr(app.state, 'product_recommender'):
-            raise HTTPException(status_code=503, detail="Product suggestion system not ready")
-        
-        recommendations = app.state.product_recommender.find_similar_by_product_id(product_id, max_results)
-        
-        return {
-            "product_id": product_id,
-            "similar_products": [rec.__dict__ for rec in recommendations],
-            "total_found": len(recommendations)
-        }
-        
-    except Exception as e:
-        logger.error(f"Similar products search failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Similar products search failed: {str(e)}")
-
-
-@app.post("/products/category/{category}")
-async def get_category_products(category: str, max_results: int = 10, min_rating: float = 4.0):
-    """
-    Get top products from a specific category.
-    
-    Args:
-        category: Product category
-        max_results: Maximum number of results
-        min_rating: Minimum rating threshold
-        
-    Returns:
-        List of category product recommendations
-    """
-    try:
-        if not hasattr(app.state, 'product_recommender'):
-            raise HTTPException(status_code=503, detail="Product suggestion system not ready")
-        
-        recommendations = app.state.product_recommender.get_category_recommendations(
-            category, max_results, min_rating
-        )
-        
-        return {
-            "category": category,
-            "min_rating": min_rating,
-            "products": [rec.__dict__ for rec in recommendations],
-            "total_found": len(recommendations)
-        }
-        
-    except Exception as e:
-        logger.error(f"Category products search failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Category products search failed: {str(e)}")
-
-
-@app.post("/products/price-based")
-async def get_price_based_products(max_price: float, category: str = None, max_results: int = 10):
-    """
-    Get product recommendations based on price range.
-    
-    Args:
-        max_price: Maximum price filter
-        category: Optional category filter
-        max_results: Maximum number of results
-        
-    Returns:
-        List of price-filtered recommendations
-    """
-    try:
-        if not hasattr(app.state, 'product_recommender'):
-            raise HTTPException(status_code=503, detail="Product suggestion system not ready")
-        
-        recommendations = app.state.product_recommender.get_price_based_recommendations(
-            max_price, category, max_results
-        )
-        
-        return {
-            "max_price": max_price,
-            "category": category,
-            "products": [rec.__dict__ for rec in recommendations],
-            "total_found": len(recommendations)
-        }
-        
-    except Exception as e:
-        logger.error(f"Price-based products search failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Price-based products search failed: {str(e)}")
-
-
 @app.post("/products/chat")
-async def chat_with_product_suggestions(query: str, session_id: str = None):
+async def chat_with_product_suggestions(query: str, session_id: Optional[str] = None):
     """
     Chat with AI copilot enhanced with product suggestions.
     

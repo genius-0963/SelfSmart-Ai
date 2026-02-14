@@ -10,6 +10,7 @@ import asyncio
 import json
 import time
 import random
+import os
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, asdict
 from urllib.parse import urljoin, quote
@@ -67,12 +68,33 @@ class AmazonScraper:
     
     async def __aenter__(self):
         """Async context manager entry."""
-        connector = aiohttp.TCPConnector(limit=10, limit_per_host=5)
-        timeout = aiohttp.ClientTimeout(total=30)
+        # Check for proxy environment variables
+        proxy = None
+        if os.getenv('HTTP_PROXY') or os.getenv('HTTPS_PROXY'):
+            proxy = os.getenv('HTTPS_PROXY') or os.getenv('HTTP_PROXY')
+            logger.info(f"Using proxy: {proxy}")
+        
+        # Configure connector with proxy support
+        connector = aiohttp.TCPConnector(
+            limit=10, 
+            limit_per_host=5,
+            ttl_dns_cache=300,
+            use_dns_cache=True,
+        )
+        
+        # Increase timeout for better reliability
+        timeout = aiohttp.ClientTimeout(
+            total=60,  # Increased from 30
+            connect=30,
+            sock_read=30
+        )
+        
+        # Create session with proxy if available
         self.session = aiohttp.ClientSession(
             connector=connector,
             timeout=timeout,
-            headers=self.headers
+            headers=self.headers,
+            trust_env=True  # This enables proxy from environment variables
         )
         return self
     
@@ -106,8 +128,24 @@ class AmazonScraper:
                     logger.warning(f"Failed to fetch {url}: {response.status}")
                     return None
                     
+        except aiohttp.ClientProxyConnectionError as e:
+            logger.error(f"Proxy connection error for {url}: {e}")
+            logger.info("Check your proxy settings or try without proxy")
+            return None
+        except aiohttp.ClientConnectorError as e:
+            logger.error(f"Connection error for {url}: {e}")
+            logger.info("Network connectivity issue - check internet connection")
+            return None
+        except aiohttp.ClientSSLError as e:
+            logger.error(f"SSL error for {url}: {e}")
+            logger.info("SSL certificate issue - may need proxy or different configuration")
+            return None
+        except asyncio.TimeoutError as e:
+            logger.error(f"Timeout error for {url}: {e}")
+            logger.info("Request timed out - network may be slow or proxy issue")
+            return None
         except Exception as e:
-            logger.error(f"Error fetching {url}: {e}")
+            logger.error(f"Unexpected error fetching {url}: {e}")
             return None
     
     def _extract_price(self, price_text: str) -> Optional[float]:
