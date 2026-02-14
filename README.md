@@ -44,7 +44,7 @@ pip install -r requirements.txt
 
 # Set environment variables
 export OPENAI_API_KEY=your_openai_key
-export ANTHROPIC_API_KEY=your_anthropic_key
+export DEEPSEEK_API_KEY=your_deepseek_key
 
 # Run the service
 python -m copilot_chatbot.main
@@ -119,7 +119,7 @@ az container create \
 ```bash
 # Required
 OPENAI_API_KEY=sk-your-openai-key
-ANTHROPIC_API_KEY=your-anthropic-key
+DEEPSEEK_API_KEY=your-deepseek-key
 
 # Optional
 DEBUG=false
@@ -167,7 +167,7 @@ The service uses environment-based configuration:
 ```python
 # .env file
 OPENAI_API_KEY=sk-your-key
-ANTHROPIC_API_KEY=your-key
+DEEPSEEK_API_KEY=sk-your-deepseek-key
 VECTOR_DB_PATH=./data/vector_store
 EMBEDDINGS_MODEL=all-MiniLM-L6-v2
 ```
@@ -175,7 +175,7 @@ EMBEDDINGS_MODEL=all-MiniLM-L6-v2
 ### Customization
 
 You can customize:
-- LLM models (OpenAI GPT-4, Claude)
+- LLM models (OpenAI GPT-4, DeepSeek)
 - Embedding models
 - Vector store settings
 - Product recommendation algorithms
@@ -194,7 +194,7 @@ services:
       - "8001:8001"
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
     volumes:
       - ./data:/app/data
 ```

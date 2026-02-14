@@ -26,23 +26,28 @@ class OpenAIClient(LLMClientBase):
     
     def __init__(self, config: LLMConfig):
         """
-        Initialize OpenAI client.
-        
-        Args:
-            config: LLM configuration
+        Initialize OpenAI/DeepSeek client.
+        Supports OpenAI and DeepSeek (OpenAI-compatible API).
         """
         super().__init__(config)
         
         if not OPENAI_AVAILABLE:
             raise ImportError("OpenAI library is required. Install with: pip install openai")
         
-        if not config.api_key:
-            raise ValueError("OpenAI API key is required")
-        
-        # Initialize OpenAI client
-        self.client = openai.OpenAI(api_key=config.api_key)
-        
-        logger.info(f"OpenAI client initialized with model: {config.model}")
+        # Prefer DeepSeek if API key is set
+        if config.deepseek_api_key:
+            self.client = openai.OpenAI(
+                api_key=config.deepseek_api_key,
+                base_url=config.deepseek_base_url
+            )
+            self._model = config.model if config.model.startswith("deepseek") else "deepseek-chat"
+            logger.info(f"DeepSeek client initialized with model: {self._model}")
+        elif config.api_key:
+            self.client = openai.OpenAI(api_key=config.api_key)
+            self._model = config.model
+            logger.info(f"OpenAI client initialized with model: {self._model}")
+        else:
+            raise ValueError("API key required. Set OPENAI_API_KEY or DEEPSEEK_API_KEY in .env")
     
     async def generate_response(
         self,
@@ -67,7 +72,7 @@ class OpenAIClient(LLMClientBase):
             
             # Generate response
             response = self.client.chat.completions.create(
-                model=self.config.model,
+                model=getattr(self, "_model", self.config.model),
                 messages=[
                     {"role": "system", "content": self.config.system_prompt},
                     {"role": "user", "content": prompt}
@@ -82,7 +87,7 @@ class OpenAIClient(LLMClientBase):
             return {
                 "text": response_text,
                 "tokens_used": tokens_used,
-                "model": self.config.model,
+                "model": getattr(self, "_model", self.config.model),
                 "finish_reason": response.choices[0].finish_reason
             }
             

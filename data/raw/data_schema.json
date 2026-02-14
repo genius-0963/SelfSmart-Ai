@@ -32,8 +32,8 @@
       "transaction_id"
     ],
     "description": "Daily sales transactions with timestamps and promotions",
-    "record_count": 5512,
-    "date_range": "2025-11-08 to 2026-02-05"
+    "record_count": 5145,
+    "date_range": "2025-11-16 to 2026-02-13"
   },
   "inventory": {
     "columns": [
@@ -47,11 +47,13 @@
       "days_of_supply",
       "inventory_value",
       "supplier",
-      "cost_per_unit"
+      "cost_per_unit",
+      "lost_sales",
+      "stockout_reason"
     ],
     "description": "Inventory movements, stock levels, and replenishment",
-    "record_count": 4577,
-    "date_range": "2025-11-08 to 2026-02-05"
+    "record_count": 4571,
+    "date_range": "2025-11-16 to 2026-02-13"
   },
   "competitor_pricing": {
     "columns": [

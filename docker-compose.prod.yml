@@ -18,7 +18,7 @@ services:
     environment:
       # API Keys (required)
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
       
       # Optional Configuration
       - DEBUG=${DEBUG:-false}

@@ -5,8 +5,10 @@ Configuration settings for the AI Copilot service.
 """
 
 import os
+from pathlib import Path
 from typing import Dict, Any
-from pydantic_settings import BaseSettings
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class VectorStoreConfig(BaseSettings):
@@ -23,11 +25,19 @@ class VectorStoreConfig(BaseSettings):
 
 
 class LLMConfig(BaseSettings):
-    """LLM configuration."""
-    
+    """LLM configuration. Reads OPENAI_API_KEY and DEEPSEEK_API_KEY from env."""
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
     provider: str = "openai"
     model: str = "gpt-3.5-turbo"
-    api_key: str = os.getenv("OPENAI_API_KEY", "")
+    api_key: str = Field(default="", validation_alias="OPENAI_API_KEY")
+    deepseek_api_key: str = Field(default="", validation_alias="DEEPSEEK_API_KEY")
+    deepseek_base_url: str = "https://api.deepseek.com"
     max_tokens: int = 1000
     temperature: float = 0.7
     system_prompt: str = """You are SmartShelf AI Copilot, an expert retail intelligence assistant with strong Natural Language Processing (NLP) capabilities.
@@ -48,9 +58,6 @@ Response style:
 - Provide specific recommendations and next steps.
 - When you use retrieved context, cite sources by name/id.
 """
-    
-    class Config:
-        env_prefix = "LLM_"
 
 
 class RAGConfig(BaseSettings):

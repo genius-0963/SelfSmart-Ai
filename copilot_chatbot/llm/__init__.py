@@ -2,10 +2,10 @@
 SmartShelf AI - LLM Clients
 
 Large Language Model client implementations.
+Supports OpenAI and DeepSeek (OpenAI-compatible API).
 """
 
 from .base import LLMClientBase
 from .openai_client import OpenAIClient
-from .claude_client import ClaudeClient
 
-__all__ = ['LLMClientBase', 'OpenAIClient', 'ClaudeClient']
+__all__ = ['LLMClientBase', 'OpenAIClient']

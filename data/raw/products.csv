@@ -1,51 +1,51 @@
 product_id,sku,product_name,category,brand,base_price,cost_price,weight_kg,dimensions_cm,supplier,status,created_date
-1,HEA00001,HomeBase Fragrance 001,Health & Beauty,HomeBase,36.69,21.84,0.66,38.9x47.5x5.0,Premium Products Ltd,active,2025-02-28 23:22:08.513817
-2,BOO00002,SportMax Game 002,Books & Media,SportMax,19.31,9.94,9.83,28.7x44.4x22.0,Global Supplies Inc,active,2025-10-11 23:22:08.513896
-3,HOM00003,BookWorld Decor 003,Home & Garden,BookWorld,95.08,49.18,1.9,40.2x27.0x10.2,Premium Products Ltd,active,2025-07-01 23:22:08.513958
-4,CLO00004,StyleCo Jacket 004,Clothing,StyleCo,136.33,70.43,2.79,43.1x24.3x12.0,Premium Products Ltd,active,2025-08-04 23:22:08.514012
-5,HEA00005,SportMax Skincare 005,Health & Beauty,SportMax,61.24,35.63,9.27,36.0x46.6x26.3,Premium Products Ltd,active,2025-11-21 23:22:08.514068
-6,HEA00006,HealthPlus Fragrance 006,Health & Beauty,HealthPlus,64.45,40.69,4.99,30.9x27.1x5.6,ValueMart Distributors,active,2025-05-22 23:22:08.514120
-7,ELE00007,HomeBase Speaker 007,Electronics,HomeBase,278.86,125.03,9.3,42.3x35.3x26.8,Premium Products Ltd,active,2025-03-28 23:22:08.514172
-8,BOO00008,FreshMart Movie 008,Books & Media,FreshMart,10.02,4.5,5.39,29.4x37.7x11.7,FastShip Logistics,active,2025-10-04 23:22:08.514222
-9,TOY00009,TechPro Electronic Toy 009,Toys & Games,TechPro,18.14,10.57,5.08,12.1x21.1x27.7,FastShip Logistics,active,2025-11-16 23:22:08.514272
-10,HOM00010,StyleCo Plant 010,Home & Garden,StyleCo,246.85,157.86,1.59,30.3x37.8x26.5,Premium Products Ltd,active,2025-08-14 23:22:08.514326
-11,HOM00011,PlayFun Plant 011,Home & Garden,PlayFun,256.18,155.95,2.36,17.0x49.3x17.9,Global Supplies Inc,active,2025-03-10 23:22:08.514376
-12,BOO00012,HomeBase Magazine 012,Books & Media,HomeBase,45.88,27.19,0.93,16.5x45.9x20.2,FastShip Logistics,active,2025-10-01 23:22:08.514425
-13,ELE00013,SportMax Laptop 013,Electronics,SportMax,122.36,76.35,6.53,44.0x36.3x19.2,Premium Products Ltd,active,2025-12-17 23:22:08.514474
-14,BOO00014,BookWorld Magazine 014,Books & Media,BookWorld,36.76,20.21,5.76,40.7x11.7x29.9,ValueMart Distributors,active,2026-01-02 23:22:08.514523
-15,FOO00015,HomeBase Snack 015,Food & Beverages,HomeBase,14.71,7.07,4.9,24.9x25.8x26.1,FastShip Logistics,active,2025-04-03 23:22:08.514574
-16,CLO00016,PlayFun Pants 016,Clothing,PlayFun,58.39,30.71,2.64,34.5x13.3x5.1,Premium Products Ltd,active,2025-02-21 23:22:08.514623
-17,TOY00017,PlayFun Electronic Toy 017,Toys & Games,PlayFun,98.46,64.16,8.62,20.0x11.6x12.6,FastShip Logistics,active,2025-04-19 23:22:08.514671
-18,SPO00018,HomeBase Accessory 018,Sports & Outdoors,HomeBase,96.99,67.0,7.17,11.6x26.0x15.8,Quality Goods Co,active,2025-05-24 23:22:08.514719
-19,CLO00019,SportMax Shirt 019,Clothing,SportMax,27.57,16.3,5.22,36.3x27.4x23.3,FastShip Logistics,active,2025-08-17 23:22:08.514769
-20,FOO00020,SportMax Snack 020,Food & Beverages,SportMax,4.17,2.67,3.53,28.6x36.0x6.2,ValueMart Distributors,active,2025-07-12 23:22:08.514816
-21,HEA00021,StyleCo Makeup 021,Health & Beauty,StyleCo,76.38,45.13,8.03,37.1x32.9x8.2,ValueMart Distributors,active,2025-09-29 23:22:08.514864
-22,HOM00022,FreshMart Furniture 022,Home & Garden,FreshMart,48.73,20.53,3.26,43.8x10.9x25.4,Global Supplies Inc,active,2025-02-28 23:22:08.514911
-23,SPO00023,StyleCo Gear 023,Sports & Outdoors,StyleCo,120.9,74.89,1.36,20.0x33.2x26.7,ValueMart Distributors,active,2025-07-09 23:22:08.514960
-24,SPO00024,HealthPlus Equipment 024,Sports & Outdoors,HealthPlus,93.18,64.07,8.49,24.2x48.3x21.9,Premium Products Ltd,active,2025-08-17 23:22:08.515007
-25,SPO00025,SportMax Footwear 025,Sports & Outdoors,SportMax,161.73,113.01,0.65,39.5x31.8x22.6,Premium Products Ltd,active,2025-04-30 23:22:08.515055
-26,BOO00026,HealthPlus Magazine 026,Books & Media,HealthPlus,19.33,12.84,2.44,46.3x33.7x13.8,Premium Products Ltd,active,2025-07-10 23:22:08.515107
-27,HEA00027,FreshMart Makeup 027,Health & Beauty,FreshMart,22.72,13.51,7.49,33.3x48.5x14.4,Global Supplies Inc,active,2025-09-13 23:22:08.515154
-28,BOO00028,StyleCo Game 028,Books & Media,StyleCo,46.76,19.76,1.75,18.7x21.8x29.9,FastShip Logistics,active,2025-12-27 23:22:08.515201
-29,CLO00029,PlayFun Jacket 029,Clothing,PlayFun,63.64,30.42,4.59,11.3x21.2x15.3,ValueMart Distributors,active,2025-11-23 23:22:08.515250
-30,FOO00030,SportMax Drink 030,Food & Beverages,SportMax,23.14,14.65,4.86,49.4x25.1x23.7,Global Supplies Inc,active,2025-03-31 23:22:08.515348
-31,ELE00031,SportMax Phone 031,Electronics,SportMax,260.91,147.84,7.71,47.8x44.0x11.2,Global Supplies Inc,active,2025-11-18 23:22:08.515464
-32,SPO00032,SportMax Accessory 032,Sports & Outdoors,SportMax,44.87,24.95,8.54,32.1x32.4x26.9,Global Supplies Inc,active,2025-04-28 23:22:08.515525
-33,HEA00033,HealthPlus Fragrance 033,Health & Beauty,HealthPlus,53.34,28.34,9.05,23.9x30.6x24.6,Premium Products Ltd,active,2025-09-24 23:22:08.515612
-34,FOO00034,TechPro Bakery 034,Food & Beverages,TechPro,21.37,9.89,5.84,23.7x31.5x16.5,FastShip Logistics,active,2025-12-31 23:22:08.515700
-35,HOM00035,PlayFun Plant 035,Home & Garden,PlayFun,210.24,101.67,1.85,13.5x14.8x16.5,Quality Goods Co,active,2025-10-22 23:22:08.515751
-36,CLO00036,SportMax Dress 036,Clothing,SportMax,123.92,79.54,7.51,17.4x18.4x14.3,Quality Goods Co,active,2025-10-22 23:22:08.515802
-37,TOY00037,StyleCo Educational 037,Toys & Games,StyleCo,88.71,44.91,4.03,14.2x39.5x9.6,Global Supplies Inc,active,2025-10-14 23:22:08.515852
-38,CLO00038,BookWorld Jacket 038,Clothing,BookWorld,64.58,36.64,5.91,32.6x25.2x13.4,Premium Products Ltd,active,2025-05-27 23:22:08.515902
-39,FOO00039,PlayFun Fresh Food 039,Food & Beverages,PlayFun,7.46,3.62,1.82,45.9x13.2x18.1,ValueMart Distributors,discontinued,2025-05-30 23:22:08.515953
-40,BOO00040,StyleCo Game 040,Books & Media,StyleCo,36.75,21.0,2.87,40.8x17.5x13.1,FastShip Logistics,active,2025-12-19 23:22:08.516004
-41,ELE00041,HomeBase Phone 041,Electronics,HomeBase,324.78,143.01,0.73,49.6x22.9x25.2,Global Supplies Inc,active,2025-02-13 23:22:08.516054
-42,ELE00042,TechPro Tablet 042,Electronics,TechPro,262.92,183.33,2.13,25.2x47.1x23.0,Premium Products Ltd,active,2025-02-14 23:22:08.516105
-43,FOO00043,TechPro Bakery 043,Food & Beverages,TechPro,5.78,2.99,8.18,27.6x25.1x16.6,Global Supplies Inc,active,2025-08-18 23:22:08.516155
-44,ELE00044,TechPro Phone 044,Electronics,TechPro,454.81,227.62,1.48,41.8x34.8x18.3,FastShip Logistics,active,2025-12-01 23:22:08.516206
-45,ELE00045,TechPro Speaker 045,Electronics,TechPro,161.82,70.1,8.48,15.1x25.9x24.9,ValueMart Distributors,active,2025-02-18 23:22:08.516257
-46,HOM00046,SportMax Decor 046,Home & Garden,SportMax,223.37,104.58,4.29,21.5x34.6x27.8,Quality Goods Co,active,2025-09-19 23:22:08.516307
-47,TOY00047,HomeBase Puzzle 047,Toys & Games,HomeBase,66.57,35.1,7.39,47.4x47.0x16.3,ValueMart Distributors,discontinued,2025-09-20 23:22:08.516364
-48,HOM00048,BookWorld Furniture 048,Home & Garden,BookWorld,194.13,112.81,1.23,26.6x44.5x28.1,Quality Goods Co,active,2025-12-22 23:22:08.516413
-49,TOY00049,FreshMart Puzzle 049,Toys & Games,FreshMart,64.35,37.95,0.23,36.5x17.1x29.0,Global Supplies Inc,active,2025-11-06 23:22:08.516461
-50,SPO00050,PlayFun Equipment 050,Sports & Outdoors,PlayFun,164.96,84.68,8.38,33.5x21.8x22.9,Quality Goods Co,active,2025-09-17 23:22:08.516509
+1,HEA00001,HomeBase Fragrance 001,Health & Beauty,HomeBase,36.69,21.84,0.66,38.9x47.5x5.0,Premium Products Ltd,active,2025-03-08 14:26:59.420032
+2,BOO00002,SportMax Game 002,Books & Media,SportMax,19.31,9.94,9.83,28.7x44.4x22.0,Global Supplies Inc,active,2025-10-19 14:26:59.420112
+3,HOM00003,BookWorld Decor 003,Home & Garden,BookWorld,95.08,49.18,1.9,40.2x27.0x10.2,Premium Products Ltd,active,2025-07-09 14:26:59.420181
+4,CLO00004,StyleCo Jacket 004,Clothing,StyleCo,136.33,70.43,2.79,43.1x24.3x12.0,Premium Products Ltd,active,2025-08-12 14:26:59.420253
+5,HEA00005,SportMax Skincare 005,Health & Beauty,SportMax,61.24,35.63,9.27,36.0x46.6x26.3,Premium Products Ltd,active,2025-11-29 14:26:59.420321
+6,HEA00006,HealthPlus Fragrance 006,Health & Beauty,HealthPlus,64.45,40.69,4.99,30.9x27.1x5.6,ValueMart Distributors,active,2025-05-30 14:26:59.420384
+7,ELE00007,HomeBase Speaker 007,Electronics,HomeBase,278.86,125.03,9.3,42.3x35.3x26.8,Premium Products Ltd,active,2025-04-05 14:26:59.420446
+8,BOO00008,FreshMart Movie 008,Books & Media,FreshMart,10.02,4.5,5.39,29.4x37.7x11.7,FastShip Logistics,active,2025-10-12 14:26:59.420508
+9,TOY00009,TechPro Electronic Toy 009,Toys & Games,TechPro,18.14,10.57,5.08,12.1x21.1x27.7,FastShip Logistics,active,2025-11-24 14:26:59.420570
+10,HOM00010,StyleCo Plant 010,Home & Garden,StyleCo,246.85,157.86,1.59,30.3x37.8x26.5,Premium Products Ltd,active,2025-08-22 14:26:59.420632
+11,HOM00011,PlayFun Plant 011,Home & Garden,PlayFun,256.18,155.95,2.36,17.0x49.3x17.9,Global Supplies Inc,active,2025-03-18 14:26:59.420694
+12,BOO00012,HomeBase Magazine 012,Books & Media,HomeBase,45.88,27.19,0.93,16.5x45.9x20.2,FastShip Logistics,active,2025-10-09 14:26:59.420755
+13,ELE00013,SportMax Laptop 013,Electronics,SportMax,122.36,76.35,6.53,44.0x36.3x19.2,Premium Products Ltd,active,2025-12-25 14:26:59.420815
+14,BOO00014,BookWorld Magazine 014,Books & Media,BookWorld,36.76,20.21,5.76,40.7x11.7x29.9,ValueMart Distributors,active,2026-01-10 14:26:59.420874
+15,FOO00015,HomeBase Snack 015,Food & Beverages,HomeBase,14.71,7.07,4.9,24.9x25.8x26.1,FastShip Logistics,active,2025-04-11 14:26:59.420934
+16,CLO00016,PlayFun Pants 016,Clothing,PlayFun,58.39,30.71,2.64,34.5x13.3x5.1,Premium Products Ltd,active,2025-03-01 14:26:59.420993
+17,TOY00017,PlayFun Electronic Toy 017,Toys & Games,PlayFun,98.46,64.16,8.62,20.0x11.6x12.6,FastShip Logistics,active,2025-04-27 14:26:59.421053
+18,SPO00018,HomeBase Accessory 018,Sports & Outdoors,HomeBase,96.99,67.0,7.17,11.6x26.0x15.8,Quality Goods Co,active,2025-06-01 14:26:59.421112
+19,CLO00019,SportMax Shirt 019,Clothing,SportMax,27.57,16.3,5.22,36.3x27.4x23.3,FastShip Logistics,active,2025-08-25 14:26:59.421171
+20,FOO00020,SportMax Snack 020,Food & Beverages,SportMax,4.17,2.67,3.53,28.6x36.0x6.2,ValueMart Distributors,active,2025-07-20 14:26:59.421235
+21,HEA00021,StyleCo Makeup 021,Health & Beauty,StyleCo,76.38,45.13,8.03,37.1x32.9x8.2,ValueMart Distributors,active,2025-10-07 14:26:59.421296
+22,HOM00022,FreshMart Furniture 022,Home & Garden,FreshMart,48.73,20.53,3.26,43.8x10.9x25.4,Global Supplies Inc,active,2025-03-08 14:26:59.421357
+23,SPO00023,StyleCo Gear 023,Sports & Outdoors,StyleCo,120.9,74.89,1.36,20.0x33.2x26.7,ValueMart Distributors,active,2025-07-17 14:26:59.421418
+24,SPO00024,HealthPlus Equipment 024,Sports & Outdoors,HealthPlus,93.18,64.07,8.49,24.2x48.3x21.9,Premium Products Ltd,active,2025-08-25 14:26:59.421478
+25,SPO00025,SportMax Footwear 025,Sports & Outdoors,SportMax,161.73,113.01,0.65,39.5x31.8x22.6,Premium Products Ltd,active,2025-05-08 14:26:59.421537
+26,BOO00026,HealthPlus Magazine 026,Books & Media,HealthPlus,19.33,12.84,2.44,46.3x33.7x13.8,Premium Products Ltd,active,2025-07-18 14:26:59.421601
+27,HEA00027,FreshMart Makeup 027,Health & Beauty,FreshMart,22.72,13.51,7.49,33.3x48.5x14.4,Global Supplies Inc,active,2025-09-21 14:26:59.421660
+28,BOO00028,StyleCo Game 028,Books & Media,StyleCo,46.76,19.76,1.75,18.7x21.8x29.9,FastShip Logistics,active,2026-01-04 14:26:59.421718
+29,CLO00029,PlayFun Jacket 029,Clothing,PlayFun,63.64,30.42,4.59,11.3x21.2x15.3,ValueMart Distributors,active,2025-12-01 14:26:59.421777
+30,FOO00030,SportMax Drink 030,Food & Beverages,SportMax,23.14,14.65,4.86,49.4x25.1x23.7,Global Supplies Inc,active,2025-04-08 14:26:59.421835
+31,ELE00031,SportMax Phone 031,Electronics,SportMax,260.91,147.84,7.71,47.8x44.0x11.2,Global Supplies Inc,active,2025-11-26 14:26:59.421895
+32,SPO00032,SportMax Accessory 032,Sports & Outdoors,SportMax,44.87,24.95,8.54,32.1x32.4x26.9,Global Supplies Inc,active,2025-05-06 14:26:59.421954
+33,HEA00033,HealthPlus Fragrance 033,Health & Beauty,HealthPlus,53.34,28.34,9.05,23.9x30.6x24.6,Premium Products Ltd,active,2025-10-02 14:26:59.422013
+34,FOO00034,TechPro Bakery 034,Food & Beverages,TechPro,21.37,9.89,5.84,23.7x31.5x16.5,FastShip Logistics,active,2026-01-08 14:26:59.422072
+35,HOM00035,PlayFun Plant 035,Home & Garden,PlayFun,210.24,101.67,1.85,13.5x14.8x16.5,Quality Goods Co,active,2025-10-30 14:26:59.422130
+36,CLO00036,SportMax Dress 036,Clothing,SportMax,123.92,79.54,7.51,17.4x18.4x14.3,Quality Goods Co,active,2025-10-30 14:26:59.422189
+37,TOY00037,StyleCo Educational 037,Toys & Games,StyleCo,88.71,44.91,4.03,14.2x39.5x9.6,Global Supplies Inc,active,2025-10-22 14:26:59.422248
+38,CLO00038,BookWorld Jacket 038,Clothing,BookWorld,64.58,36.64,5.91,32.6x25.2x13.4,Premium Products Ltd,active,2025-06-04 14:26:59.422306
+39,FOO00039,PlayFun Fresh Food 039,Food & Beverages,PlayFun,7.46,3.62,1.82,45.9x13.2x18.1,ValueMart Distributors,discontinued,2025-06-07 14:26:59.422369
+40,BOO00040,StyleCo Game 040,Books & Media,StyleCo,36.75,21.0,2.87,40.8x17.5x13.1,FastShip Logistics,active,2025-12-27 14:26:59.422428
+41,ELE00041,HomeBase Phone 041,Electronics,HomeBase,324.78,143.01,0.73,49.6x22.9x25.2,Global Supplies Inc,active,2025-02-21 14:26:59.422487
+42,ELE00042,TechPro Tablet 042,Electronics,TechPro,262.92,183.33,2.13,25.2x47.1x23.0,Premium Products Ltd,active,2025-02-22 14:26:59.422546
+43,FOO00043,TechPro Bakery 043,Food & Beverages,TechPro,5.78,2.99,8.18,27.6x25.1x16.6,Global Supplies Inc,active,2025-08-26 14:26:59.422605
+44,ELE00044,TechPro Phone 044,Electronics,TechPro,454.81,227.62,1.48,41.8x34.8x18.3,FastShip Logistics,active,2025-12-09 14:26:59.422663
+45,ELE00045,TechPro Speaker 045,Electronics,TechPro,161.82,70.1,8.48,15.1x25.9x24.9,ValueMart Distributors,active,2025-02-26 14:26:59.422722
+46,HOM00046,SportMax Decor 046,Home & Garden,SportMax,223.37,104.58,4.29,21.5x34.6x27.8,Quality Goods Co,active,2025-09-27 14:26:59.422780
+47,TOY00047,HomeBase Puzzle 047,Toys & Games,HomeBase,66.57,35.1,7.39,47.4x47.0x16.3,ValueMart Distributors,discontinued,2025-09-28 14:26:59.422839
+48,HOM00048,BookWorld Furniture 048,Home & Garden,BookWorld,194.13,112.81,1.23,26.6x44.5x28.1,Quality Goods Co,active,2025-12-30 14:26:59.422897
+49,TOY00049,FreshMart Puzzle 049,Toys & Games,FreshMart,64.35,37.95,0.23,36.5x17.1x29.0,Global Supplies Inc,active,2025-11-14 14:26:59.422955
+50,SPO00050,PlayFun Equipment 050,Sports & Outdoors,PlayFun,164.96,84.68,8.38,33.5x21.8x22.9,Quality Goods Co,active,2025-09-25 14:26:59.423014

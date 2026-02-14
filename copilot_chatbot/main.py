@@ -4,6 +4,14 @@ SmartShelf AI - AI Chat Service
 Simplified chat service with 4 core endpoints for global deployment.
 """
 
+# Load .env BEFORE any config imports so API keys are available
+import os
+from pathlib import Path
+_env_path = Path(__file__).resolve().parent.parent / ".env"
+if _env_path.exists():
+    from dotenv import load_dotenv
+    load_dotenv(_env_path)
+
 import asyncio
 import logging
 from fastapi import FastAPI, HTTPException
@@ -11,6 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import time
 from typing import Optional
+from pydantic import BaseModel
 
 from .rag.pipeline import RAGPipeline
 from .llm.openai_client import OpenAIClient
@@ -18,6 +27,17 @@ from .vector_store.chromadb_client import ChromaDBClient
 from .product_suggestion.recommender import AmazonProductRecommender
 from .config import CopilotConfig
 from .core.exceptions import CopilotException
+
+# Phase 1 NLU (optional): intent recognition, response generation, sports, product knowledge
+try:
+    from .nlp.intent_recognition import create_intent_engine
+    from .nlp.intent_recognition import IntentType  # noqa: F401 - used when Phase 1 active
+    from .nlp.response_generation import create_response_generator
+    from .nlp.conversation_flow import create_conversation_manager
+    _PHASE1_NLU_AVAILABLE = True
+except Exception:
+    _PHASE1_NLU_AVAILABLE = False
+    IntentType = None  # type: ignore
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -41,14 +61,23 @@ async def lifespan(app: FastAPI):
         logger.info("✅ Vector store initialized")
         
         # Initialize LLM client
-        llm_client = OpenAIClient(config.llm)
-        app.state.llm_client = llm_client
-        logger.info("✅ LLM client initialized")
+        try:
+            llm_client = OpenAIClient(config.llm)
+            app.state.llm_client = llm_client
+            logger.info("✅ LLM client initialized")
+        except Exception as e:
+            logger.warning(f"⚠️  LLM client initialization failed: {e}")
+            logger.warning("⚠️  Server will start but chat features will be limited. Please set OPENAI_API_KEY or DEEPSEEK_API_KEY in .env file.")
+            app.state.llm_client = None
         
         # Initialize RAG pipeline
-        rag_pipeline = RAGPipeline(vector_store, llm_client, config.rag)
-        app.state.rag_pipeline = rag_pipeline
-        logger.info("✅ RAG pipeline initialized")
+        if app.state.llm_client:
+            rag_pipeline = RAGPipeline(vector_store, llm_client, config.rag)
+            app.state.rag_pipeline = rag_pipeline
+            logger.info("✅ RAG pipeline initialized")
+        else:
+            app.state.rag_pipeline = None
+            logger.warning("⚠️  RAG pipeline disabled (no LLM client)")
         
         # Initialize Product Suggestion System
         try:
@@ -65,10 +94,28 @@ async def lifespan(app: FastAPI):
         logger.info("✅ Product suggestion system initialized")
         
         # Build initial index if needed
-        if not vector_store.has_documents():
+        if app.state.rag_pipeline and not vector_store.has_documents():
             logger.info("📚 Building initial document index...")
-            await rag_pipeline.build_index()
+            await app.state.rag_pipeline.build_index()
             logger.info("✅ Document index built")
+        
+        # Phase 1 NLU: intent recognition, responses, sports, product knowledge (no API key required)
+        if _PHASE1_NLU_AVAILABLE:
+            try:
+                app.state.intent_engine = create_intent_engine()
+                app.state.response_generator = create_response_generator()
+                app.state.conversation_manager = create_conversation_manager()
+                logger.info("✅ Phase 1 NLU initialized (intent, responses, sports, products)")
+            except Exception as e:
+                logger.warning(f"⚠️  Phase 1 NLU init failed: {e}")
+                app.state.intent_engine = None
+                app.state.response_generator = None
+                app.state.conversation_manager = None
+        else:
+            app.state.intent_engine = None
+            app.state.response_generator = None
+            app.state.conversation_manager = None
+            logger.debug("Phase 1 NLU not loaded (import failed)")
         
         logger.info("🎉 SmartShelf AI Chat Service started successfully!")
         
@@ -143,21 +190,64 @@ async def health_check():
         raise HTTPException(status_code=503, detail="Service unhealthy")
 
 
+class ChatRequest(BaseModel):
+    """Request body for /chat (JSON from frontend)."""
+    query: str
+    session_id: Optional[str] = "default"
+
+
 @app.post("/chat")
-async def chat(query: str, session_id: Optional[str] = None):
+async def chat(req: ChatRequest):
     """
     Chat with the AI Copilot.
-    
-    Args:
-        query: User query
-        session_id: Optional session ID for conversation context
-        
-    Returns:
-        AI response with context and insights
+    Accepts JSON body: { "query": "...", "session_id": "optional" }
+    Uses Phase 1 NLU (intent, sports, products) when available; otherwise RAG/fallback.
     """
+    query = req.query or ""
+    session_id = req.session_id or "default"
     try:
-        if not hasattr(app.state, 'rag_pipeline'):
-            raise HTTPException(status_code=503, detail="RAG pipeline not ready")
+        # Phase 1 NLU: use intent + response + conversation flow when available and confident
+        if (
+            getattr(app.state, "conversation_manager", None)
+            and getattr(app.state, "intent_engine", None)
+            and getattr(app.state, "response_generator", None)
+        ):
+            try:
+                intent = app.state.intent_engine.process_input(query)
+                # Use Phase 1 for greeting, help, product_inquiry, sports_topic (and optionally general_question)
+                if intent.confidence >= 0.5 and intent.intent_type != IntentType.UNKNOWN:
+                    session_id_inner = session_id or "default"
+                    session = app.state.conversation_manager.get_session(session_id_inner)
+                    if not session:
+                        session_id_inner = app.state.conversation_manager.create_session("default")
+                    response_obj = app.state.response_generator.generate_response(intent)
+                    conv_result = app.state.conversation_manager.process_message(
+                        session_id_inner, query, intent, response_obj
+                    )
+                    text = response_obj.text
+                    if conv_result.get("specialized_response") and conv_result["specialized_response"].get("response"):
+                        text = conv_result["specialized_response"]["response"]
+                    return {
+                        "response": text,
+                        "session_id": session_id_inner,
+                        "query": query,
+                        "context": [],
+                        "model": "phase1_nlu",
+                        "intent": intent.intent_type.value,
+                        "follow_up_questions": response_obj.follow_up_questions or conv_result.get("follow_up_questions", []),
+                    }
+            except Exception as nlu_err:
+                logger.debug(f"Phase 1 NLU path skipped: {nlu_err}")
+        
+        if not hasattr(app.state, 'rag_pipeline') or app.state.rag_pipeline is None:
+            # Fallback response when LLM is not configured
+            return {
+                "response": "⚠️ No API key configured. Please set OPENAI_API_KEY or DEEPSEEK_API_KEY in your .env file to enable chat features.\n\nFor now, I can help you with:\n- Product searches\n- Basic information\n\nTo enable full chat capabilities, add your OpenAI API key to the .env file and restart the server.",
+                "session_id": session_id,
+                "query": query,
+                "context": [],
+                "model": "fallback"
+            }
         
         # Process query through RAG pipeline
         response = await app.state.rag_pipeline.process_query(query, session_id)
@@ -199,26 +289,29 @@ async def search_context(query: str, max_results: int = 5):
 
 
 @app.post("/products/chat")
-async def chat_with_product_suggestions(query: str, session_id: Optional[str] = None):
+async def chat_with_product_suggestions(req: ChatRequest):
     """
     Chat with AI copilot enhanced with product suggestions.
-    
-    Args:
-        query: User query
-        session_id: Optional session ID for conversation context
-        
-    Returns:
-        AI response with product suggestions
+    Accepts JSON body: { "query": "...", "session_id": "optional" }
     """
+    query = req.query or ""
+    session_id = req.session_id or "default"
     try:
-        if not hasattr(app.state, 'rag_pipeline'):
-            raise HTTPException(status_code=503, detail="RAG pipeline not ready")
+        if not hasattr(app.state, 'rag_pipeline') or app.state.rag_pipeline is None:
+            # Fallback response when LLM is not configured
+            rag_response = {
+                "response": "⚠️ No API key configured. Please set OPENAI_API_KEY or DEEPSEEK_API_KEY in your .env file to enable chat features with product suggestions.",
+                "session_id": session_id,
+                "query": query,
+                "context": [],
+                "model": "fallback"
+            }
+        else:
+            # Process query through RAG pipeline
+            rag_response = await app.state.rag_pipeline.process_query(query, session_id)
         
         if not hasattr(app.state, 'product_recommender'):
             raise HTTPException(status_code=503, detail="Product suggestion system not ready")
-        
-        # Process query through RAG pipeline
-        rag_response = await app.state.rag_pipeline.process_query(query, session_id)
         
         # Check if query might be product-related and add suggestions
         product_keywords = ['product', 'recommend', 'suggest', 'find', 'buy', 'price', 'best']

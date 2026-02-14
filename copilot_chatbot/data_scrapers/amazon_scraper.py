@@ -1,333 +1,304 @@
 """
-Amazon Product Data Scraper
-
-Collects product data from Amazon for training the copilot suggestion system.
+Enhanced Amazon Scraper with Anti-Bot Bypass
+Includes rotating user agents, rate limiting, and retry logic
 """
 
 import asyncio
 import aiohttp
-import asyncio
-import json
-import time
-import random
-import os
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass, asdict
-from urllib.parse import urljoin, quote
-import logging
 from bs4 import BeautifulSoup
-import re
+from typing import List, Optional, Dict
+import random
+import logging
+from dataclasses import dataclass
+from urllib.parse import quote_plus
+import time
+import os
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 @dataclass
 class AmazonProduct:
-    """Amazon product data structure."""
-    
-    product_id: str
+    """Enhanced Amazon product data structure"""
     title: str
-    brand: str
     price: float
-    original_price: Optional[float]
-    rating: float
-    review_count: int
-    category: str
-    subcategory: str
-    description: str
-    features: List[str]
-    images: List[str]
-    availability: str
-    prime_eligible: bool
-    best_seller_rank: Optional[int]
+    rating: Optional[float]
+    reviews_count: Optional[int]
     url: str
-    scraped_at: str
+    image_url: Optional[str]
+    availability: str
+    brand: Optional[str] = None
+    original_price: Optional[float] = None
+    category: Optional[str] = None
+    features: List[str] = None
+    scraped_at: str = ""
+    
+    def __post_init__(self):
+        if self.features is None:
+            self.features = []
+        if not self.scraped_at:
+            self.scraped_at = time.strftime('%Y-%m-%d %H:%M:%S')
 
 
 class AmazonScraper:
-    """Amazon product data scraper."""
+    """Enhanced Amazon scraper with anti-bot measures"""
     
-    def __init__(self, delay_range: tuple = (1, 3)):
+    # Pool of realistic user agents
+    USER_AGENTS = [
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 OPR/106.0.0.0',
+        'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (X11; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0',
+    ]
+    
+    # Accept-Language variations
+    ACCEPT_LANGUAGES = [
+        'en-US,en;q=0.9',
+        'en-GB,en;q=0.9,en-US;q=0.8',
+        'en-US,en;q=0.8',
+        'en-CA,en;q=0.9,en-US;q=0.8',
+        'en-AU,en;q=0.9,en-US;q=0.8',
+    ]
+    
+    def __init__(self, 
+                 min_delay: float = 4.0, 
+                 max_delay: float = 9.0,
+                 max_retries: int = 3,
+                 base_url: str = "https://www.amazon.com",
+                 proxy_list: Optional[List[str]] = None,
+                 rotate_proxies: bool = True):
         """
-        Initialize Amazon scraper.
+        Initialize the enhanced scraper with proxy support
         
         Args:
-            delay_range: Tuple of (min, max) seconds to delay between requests
+            min_delay: Minimum seconds between requests
+            max_delay: Maximum seconds between requests
+            max_retries: Maximum retry attempts per request
+            base_url: Amazon base URL
+            proxy_list: List of proxy URLs (e.g., ["http://proxy1:8080", "http://user:pass@proxy2:8080"])
+            rotate_proxies: Whether to rotate proxies for each request
         """
-        self.base_url = "https://www.amazon.com"
-        self.delay_range = delay_range
-        self.session = None
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Accept-Encoding': 'gzip, deflate',
+        self.min_delay = min_delay
+        self.max_delay = max_delay
+        self.max_retries = max_retries
+        self.base_url = base_url
+        self.session: Optional[aiohttp.ClientSession] = None
+        self.last_request_time = 0
+        self.rotate_proxies = rotate_proxies
+        self.current_proxy_index = 0
+        
+        # Load proxy list
+        self.proxy_list = self._load_proxy_list(proxy_list)
+        logger.info(f"Initialized with {len(self.proxy_list)} proxies")
+    
+    def _load_proxy_list(self, proxy_list: Optional[List[str]]) -> List[str]:
+        """Load proxy list from multiple sources"""
+        proxies = []
+        
+        # Add provided proxies
+        if proxy_list:
+            proxies.extend(proxy_list)
+        
+        # Load from environment variables
+        env_proxies = [
+            os.getenv('HTTP_PROXY'),
+            os.getenv('HTTPS_PROXY'),
+            os.getenv('http_proxy'),
+            os.getenv('https_proxy')
+        ]
+        for proxy in env_proxies:
+            if proxy and proxy not in proxies:
+                proxies.append(proxy)
+        
+        # Load from file if exists
+        proxy_file = 'proxies.txt'
+        if os.path.exists(proxy_file):
+            try:
+                with open(proxy_file, 'r') as f:
+                    file_proxies = [line.strip() for line in f if line.strip() and not line.startswith('#')]
+                    proxies.extend(file_proxies)
+                logger.info(f"Loaded {len(file_proxies)} proxies from {proxy_file}")
+            except Exception as e:
+                logger.warning(f"Failed to load proxies from {proxy_file}: {e}")
+        
+        # Default free proxies for testing (use with caution)
+        if not proxies:
+            logger.warning("No proxies provided. Using direct connection (may be blocked).")
+        
+        return proxies
+    
+    def _get_next_proxy(self) -> Optional[str]:
+        """Get next proxy from list with rotation"""
+        if not self.proxy_list:
+            return None
+        
+        if not self.rotate_proxies:
+            return random.choice(self.proxy_list)
+        
+        # Round-robin rotation
+        proxy = self.proxy_list[self.current_proxy_index]
+        self.current_proxy_index = (self.current_proxy_index + 1) % len(self.proxy_list)
+        return proxy
+        
+    def _get_random_headers(self) -> Dict[str, str]:
+        """Generate randomized headers to appear more human-like"""
+        return {
+            'User-Agent': random.choice(self.USER_AGENTS),
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language': random.choice(self.ACCEPT_LANGUAGES),
+            'Accept-Encoding': 'gzip, deflate, br',
+            'DNT': '1',
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Cache-Control': 'max-age=0',
+            'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': random.choice(['"Windows"', '"macOS"', '"Linux"']),
         }
     
-    async def __aenter__(self):
-        """Async context manager entry."""
-        # Check for proxy environment variables
-        proxy = None
-        if os.getenv('HTTP_PROXY') or os.getenv('HTTPS_PROXY'):
-            proxy = os.getenv('HTTPS_PROXY') or os.getenv('HTTP_PROXY')
-            logger.info(f"Using proxy: {proxy}")
+    async def _rate_limit(self):
+        """Implement smart rate limiting with random delays"""
+        current_time = time.time()
+        time_since_last = current_time - self.last_request_time
         
-        # Configure connector with proxy support
-        connector = aiohttp.TCPConnector(
-            limit=10, 
-            limit_per_host=5,
-            ttl_dns_cache=300,
-            use_dns_cache=True,
-        )
+        # Random delay between min_delay and max_delay
+        delay = random.uniform(self.min_delay, self.max_delay)
         
-        # Increase timeout for better reliability
-        timeout = aiohttp.ClientTimeout(
-            total=60,  # Increased from 30
-            connect=30,
-            sock_read=30
-        )
+        # If we made a request recently, wait the remaining time
+        if time_since_last < delay:
+            wait_time = delay - time_since_last
+            logger.info(f"Rate limiting: waiting {wait_time:.2f}s")
+            await asyncio.sleep(wait_time)
         
-        # Create session with proxy if available
-        self.session = aiohttp.ClientSession(
-            connector=connector,
-            timeout=timeout,
-            headers=self.headers,
-            trust_env=True  # This enables proxy from environment variables
-        )
-        return self
+        self.last_request_time = time.time()
     
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        """Async context manager exit."""
-        if self.session:
-            await self.session.close()
-    
-    async def _random_delay(self):
-        """Add random delay to avoid rate limiting."""
-        delay = random.uniform(*self.delay_range)
-        await asyncio.sleep(delay)
-    
-    async def _get_page(self, url: str) -> Optional[str]:
+    async def _fetch_with_retry(self, url: str, retry_count: int = 0) -> Optional[str]:
         """
-        Fetch page content.
+        Fetch URL with exponential backoff retry logic and proxy support
         
         Args:
             url: URL to fetch
+            retry_count: Current retry attempt
             
         Returns:
-            Page HTML content or None if failed
+            HTML content or None if failed
         """
+        if retry_count >= self.max_retries:
+            logger.error(f"Max retries ({self.max_retries}) reached for {url}")
+            return None
+        
         try:
-            await self._random_delay()
+            # Apply rate limiting
+            await self._rate_limit()
             
-            async with self.session.get(url) as response:
+            # Get proxy for this request
+            proxy = self._get_next_proxy()
+            
+            # Generate fresh headers for each request
+            headers = self._get_random_headers()
+            
+            logger.info(f"Fetching {url} (attempt {retry_count + 1}/{self.max_retries})")
+            
+            # Configure request with proxy
+            request_kwargs = {
+                'headers': headers,
+                'timeout': 30
+            }
+            
+            if proxy:
+                request_kwargs['proxy'] = proxy
+            
+            async with self.session.get(url, **request_kwargs) as response:
+                # Check for successful response
                 if response.status == 200:
-                    return await response.text()
-                else:
-                    logger.warning(f"Failed to fetch {url}: {response.status}")
+                    content = await response.text()
+                    logger.info(f"✓ Successfully fetched {url}")
+                    return content
+                
+                # Handle specific error codes
+                elif response.status == 503:
+                    logger.warning(f"Amazon returned 503 (Service Unavailable). Retrying with longer delay...")
+                    await asyncio.sleep(random.uniform(10, 15))
+                    return await self._fetch_with_retry(url, retry_count + 1)
+                
+                elif response.status in [429, 403]:
+                    logger.warning(f"Rate limited (status {response.status}). Backing off and rotating proxy...")
+                    # Exponential backoff: 2^retry_count * base_delay
+                    backoff = (2 ** retry_count) * random.uniform(5, 10)
+                    await asyncio.sleep(backoff)
+                    return await self._fetch_with_retry(url, retry_count + 1)
+                
+                elif response.status == 407:
+                    logger.error(f"Proxy authentication failed")
+                    # Try next proxy
+                    if self.proxy_list and len(self.proxy_list) > 1:
+                        return await self._fetch_with_retry(url, retry_count + 1)
                     return None
+                
+                elif response.status == 404:
+                    logger.error(f"Page not found: {url}")
+                    return None
+                
+                else:
+                    logger.warning(f"Unexpected status {response.status} for {url}")
+                    # Retry with exponential backoff
+                    await asyncio.sleep((2 ** retry_count) * random.uniform(3, 6))
+                    return await self._fetch_with_retry(url, retry_count + 1)
                     
         except aiohttp.ClientProxyConnectionError as e:
-            logger.error(f"Proxy connection error for {url}: {e}")
-            logger.info("Check your proxy settings or try without proxy")
+            logger.error(f"Proxy connection error: {e}")
+            if retry_count < self.max_retries - 1:
+                await asyncio.sleep(random.uniform(3, 6))
+                return await self._fetch_with_retry(url, retry_count + 1)
             return None
-        except aiohttp.ClientConnectorError as e:
-            logger.error(f"Connection error for {url}: {e}")
-            logger.info("Network connectivity issue - check internet connection")
-            return None
-        except aiohttp.ClientSSLError as e:
-            logger.error(f"SSL error for {url}: {e}")
-            logger.info("SSL certificate issue - may need proxy or different configuration")
-            return None
-        except asyncio.TimeoutError as e:
-            logger.error(f"Timeout error for {url}: {e}")
-            logger.info("Request timed out - network may be slow or proxy issue")
-            return None
-        except Exception as e:
-            logger.error(f"Unexpected error fetching {url}: {e}")
-            return None
-    
-    def _extract_price(self, price_text: str) -> Optional[float]:
-        """Extract price from text."""
-        if not price_text:
-            return None
-        
-        # Remove currency symbols and convert to float
-        price_clean = re.sub(r'[^\d.]', '', price_text)
-        try:
-            return float(price_clean)
-        except ValueError:
-            return None
-    
-    def _extract_rating(self, rating_text: str) -> float:
-        """Extract rating from text."""
-        if not rating_text:
-            return 0.0
-        
-        # Extract number before "out of"
-        match = re.search(r'(\d+\.?\d*)\s*out of', rating_text)
-        if match:
-            return float(match.group(1))
-        return 0.0
-    
-    def _extract_review_count(self, review_text: str) -> int:
-        """Extract review count from text."""
-        if not review_text:
-            return 0
-        
-        # Extract number and handle commas
-        match = re.search(r'([\d,]+)\s*ratings?', review_text.lower())
-        if match:
-            return int(match.group(1).replace(',', ''))
-        return 0
-    
-    async def scrape_product_page(self, product_url: str) -> Optional[AmazonProduct]:
-        """
-        Scrape a single Amazon product page.
-        
-        Args:
-            product_url: URL of the Amazon product page
             
-        Returns:
-            AmazonProduct object or None if failed
-        """
-        html = await self._get_page(product_url)
-        if not html:
-            return None
-        
-        try:
-            soup = BeautifulSoup(html, 'html.parser')
-            
-            # Extract product ID from URL
-            product_id_match = re.search(r'/dp/([A-Z0-9]{10})', product_url)
-            product_id = product_id_match.group(1) if product_id_match else ""
-            
-            # Basic product info
-            title = soup.find('span', {'id': 'productTitle'})
-            title = title.get_text(strip=True) if title else ""
-            
-            brand = soup.find('a', {'id': 'bylineInfo'})
-            if brand:
-                brand_text = brand.get_text(strip=True)
-                brand = brand_text.replace('Brand: ', '').replace('Visit the ', '').replace(' Store', '')
-            else:
-                brand = ""
-            
-            # Price information
-            price_whole = soup.find('span', {'class': 'a-price-whole'})
-            price_fraction = soup.find('span', {'class': 'a-price-fraction'})
-            if price_whole and price_fraction:
-                price = float(f"{price_whole.get_text()}.{price_fraction.get_text()}")
-            else:
-                price = 0.0
-            
-            # Original price (if discounted)
-            original_price_elem = soup.find('span', {'class': 'a-price a-text-price'})
-            original_price = None
-            if original_price_elem:
-                original_price_text = original_price_elem.get_text(strip=True)
-                original_price = self._extract_price(original_price_text)
-            
-            # Rating and reviews
-            rating_elem = soup.find('span', {'class': 'a-icon-alt'})
-            rating = self._extract_rating(rating_elem.get_text() if rating_elem else "")
-            
-            review_count_elem = soup.find('span', {'id': 'acrCustomerReviewText'})
-            review_count = self._extract_review_count(
-                review_count_elem.get_text() if review_count_elem else ""
-            )
-            
-            # Category breadcrumbs
-            breadcrumbs = soup.find('ul', {'class': 'a-unordered-list a-horizontal a-size-small'})
-            category_parts = []
-            if breadcrumbs:
-                for li in breadcrumbs.find_all('li'):
-                    link = li.find('a')
-                    if link:
-                        category_parts.append(link.get_text(strip=True))
-            
-            category = category_parts[0] if len(category_parts) > 0 else ""
-            subcategory = category_parts[1] if len(category_parts) > 1 else ""
-            
-            # Product description
-            description_elem = soup.find('div', {'id': 'productDescription'})
-            description = ""
-            if description_elem:
-                description = description_elem.get_text(strip=True)
-            
-            # Product features (bullet points)
-            features = []
-            feature_list = soup.find('div', {'id': 'feature-bullets'})
-            if feature_list:
-                for li in feature_list.find_all('li'):
-                    feature_text = li.get_text(strip=True)
-                    if feature_text and not feature_text.startswith('›'):
-                        features.append(feature_text)
-            
-            # Product images
-            images = []
-            img_container = soup.find('div', {'id': 'altImages'})
-            if img_container:
-                for img in img_container.find_all('img'):
-                    src = img.get('src')
-                    if src and 'images-I51' in src:  # Product image pattern
-                        images.append(src)
-            
-            # Availability
-            availability = soup.find('div', {'id': 'availability'})
-            availability_text = availability.get_text(strip=True) if availability else "Unknown"
-            
-            # Prime eligibility
-            prime_elem = soup.find('i', {'class': 'a-icon-prime'})
-            prime_eligible = prime_elem is not None
-            
-            # Best seller rank
-            rank_elem = soup.find('th', string=re.compile(r'Best Sellers Rank'))
-            best_seller_rank = None
-            if rank_elem:
-                rank_td = rank_elem.find_next_sibling('td')
-                if rank_td:
-                    rank_text = rank_td.get_text(strip=True)
-                    # Extract first number from rank text
-                    rank_match = re.search(r'#([\d,]+)', rank_text)
-                    if rank_match:
-                        best_seller_rank = int(rank_match.group(1).replace(',', ''))
-            
-            product = AmazonProduct(
-                product_id=product_id,
-                title=title,
-                brand=brand,
-                price=price,
-                original_price=original_price,
-                rating=rating,
-                review_count=review_count,
-                category=category,
-                subcategory=subcategory,
-                description=description,
-                features=features,
-                images=images,
-                availability=availability_text,
-                prime_eligible=prime_eligible,
-                best_seller_rank=best_seller_rank,
-                url=product_url,
-                scraped_at=time.strftime('%Y-%m-%d %H:%M:%S')
-            )
-            
-            logger.info(f"Successfully scraped product: {title[:50]}...")
-            return product
+        except asyncio.TimeoutError:
+            logger.warning(f"Timeout fetching {url}. Retrying...")
+            await asyncio.sleep(random.uniform(5, 8))
+            return await self._fetch_with_retry(url, retry_count + 1)
             
         except Exception as e:
-            logger.error(f"Error parsing product page {product_url}: {e}")
+            logger.error(f"Error fetching {url}: {e}")
+            if retry_count < self.max_retries - 1:
+                await asyncio.sleep(random.uniform(3, 6))
+                return await self._fetch_with_retry(url, retry_count + 1)
             return None
     
-    async def search_products(self, keyword: str, max_pages: int = 5) -> List[str]:
+    async def __aenter__(self):
+        """Async context manager entry"""
+        # Create session with cookie jar for session persistence
+        cookie_jar = aiohttp.CookieJar()
+        self.session = aiohttp.ClientSession(cookie_jar=cookie_jar)
+        return self
+    
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Async context manager exit"""
+        if self.session:
+            await self.session.close()
+    
+    async def search_products(self, query: str, max_pages: int = 3) -> List[str]:
         """
-        Search for products and return product URLs.
+        Search for products and return product URLs
         
         Args:
-            keyword: Search keyword
-            max_pages: Maximum number of pages to scrape
+            query: Search query
+            max_pages: Maximum number of search result pages to scrape
             
         Returns:
             List of product URLs
@@ -335,35 +306,152 @@ class AmazonScraper:
         product_urls = []
         
         for page in range(1, max_pages + 1):
-            search_url = f"{self.base_url}/s?k={quote(keyword)}&page={page}"
+            search_url = f"{self.base_url}/s?k={quote_plus(query)}&page={page}"
             
-            html = await self._get_page(search_url)
+            html = await self._fetch_with_retry(search_url)
             if not html:
+                logger.warning(f"Failed to fetch search page {page}")
                 continue
             
-            try:
-                soup = BeautifulSoup(html, 'html.parser')
-                
-                # Find product links
-                product_links = soup.find_all('a', {'class': 'a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal'})
-                
-                for link in product_links:
-                    href = link.get('href')
-                    if href and '/dp/' in href:
-                        full_url = urljoin(self.base_url, href)
-                        if full_url not in product_urls:
-                            product_urls.append(full_url)
-                
-                logger.info(f"Found {len(product_links)} products on page {page}")
-                
-            except Exception as e:
-                logger.error(f"Error parsing search results page {page}: {e}")
+            soup = BeautifulSoup(html, 'html.parser')
+            
+            # Find product links - multiple selectors for robustness
+            product_links = soup.select('h2.s-line-clamp-2 a, div.s-title-instructions-style a, h2 a.a-link-normal')
+            
+            for link in product_links:
+                href = link.get('href')
+                if href and '/dp/' in href:
+                    # Construct full URL
+                    if href.startswith('/'):
+                        full_url = f"{self.base_url}{href}"
+                    else:
+                        full_url = href
+                    
+                    # Clean URL (remove tracking parameters)
+                    clean_url = full_url.split('?')[0] if '?' in full_url else full_url
+                    
+                    if clean_url not in product_urls:
+                        product_urls.append(clean_url)
+            
+            logger.info(f"Found {len(product_links)} products on page {page}")
         
-        return product_urls[:50]  # Limit to 50 products
+        logger.info(f"Total unique products found: {len(product_urls)}")
+        return product_urls
     
+    async def scrape_product_page(self, url: str) -> Optional[AmazonProduct]:
+        """
+        Scrape product details from a product page
+        
+        Args:
+            url: Product page URL
+            
+        Returns:
+            AmazonProduct object or None if scraping failed
+        """
+        html = await self._fetch_with_retry(url)
+        if not html:
+            return None
+        
+        soup = BeautifulSoup(html, 'html.parser')
+        
+        try:
+            # Extract title - multiple selectors for robustness
+            title_elem = soup.select_one('#productTitle, #title')
+            title = title_elem.get_text(strip=True) if title_elem else "Unknown Product"
+            
+            # Extract price - try multiple price selectors
+            price = 0.0
+            price_selectors = [
+                '.a-price .a-offscreen',
+                '#priceblock_ourprice',
+                '#priceblock_dealprice',
+                '.a-price-whole',
+                'span.priceToPay .a-offscreen'
+            ]
+            
+            for selector in price_selectors:
+                price_elem = soup.select_one(selector)
+                if price_elem:
+                    price_text = price_elem.get_text(strip=True)
+                    # Extract numeric value
+                    price_text = price_text.replace('$', '').replace(',', '')
+                    try:
+                        price = float(price_text)
+                        break
+                    except ValueError:
+                        continue
+            
+            # Extract rating
+            rating = None
+            rating_elem = soup.select_one('span.a-icon-alt')
+            if rating_elem:
+                rating_text = rating_elem.get_text(strip=True)
+                try:
+                    rating = float(rating_text.split()[0])
+                except (ValueError, IndexError):
+                    pass
+            
+            # Extract review count
+            reviews_count = None
+            reviews_elem = soup.select_one('#acrCustomerReviewText')
+            if reviews_elem:
+                reviews_text = reviews_elem.get_text(strip=True)
+                try:
+                    reviews_count = int(reviews_text.replace(',', '').split()[0])
+                except (ValueError, IndexError):
+                    pass
+            
+            # Extract image URL
+            image_url = None
+            image_elem = soup.select_one('#landingImage, #imgBlkFront')
+            if image_elem:
+                image_url = image_elem.get('src') or image_elem.get('data-old-hires')
+            
+            # Extract availability
+            availability = "Unknown"
+            avail_elem = soup.select_one('#availability span')
+            if avail_elem:
+                availability = avail_elem.get_text(strip=True)
+            
+            # Extract brand
+            brand = None
+            brand_elem = soup.select_one('#bylineInfo')
+            if brand_elem:
+                brand_text = brand_elem.get_text(strip=True)
+                brand = brand_text.replace('Brand: ', '').replace('Visit the ', '').replace(' Store', '')
+            
+            # Extract features
+            features = []
+            feature_list = soup.select_one('#feature-bullets ul')
+            if feature_list:
+                for li in feature_list.find_all('li'):
+                    feature_text = li.get_text(strip=True)
+                    if feature_text and not feature_text.startswith('›'):
+                        features.append(feature_text)
+            
+            product = AmazonProduct(
+                title=title,
+                price=price,
+                rating=rating,
+                reviews_count=reviews_count,
+                url=url,
+                image_url=image_url,
+                availability=availability,
+                brand=brand,
+                features=features
+            )
+            
+            logger.info(f"✓ Scraped product: {title[:50]}... (${price})")
+            return product
+            
+        except Exception as e:
+            logger.error(f"Error parsing product page {url}: {e}")
+            return None
+    
+    # Legacy methods for compatibility
     async def scrape_category_products(self, category: str, max_products: int = 100) -> List[AmazonProduct]:
         """
-        Scrape products from a specific category.
+        Scrape products from a specific category (legacy method).
         
         Args:
             category: Category name or keyword
@@ -408,12 +496,129 @@ class AmazonScraper:
             products: List of AmazonProduct objects
             filename: Output filename
         """
-        products_data = [asdict(product) for product in products]
+        import json
+        products_data = []
+        for product in products:
+            product_dict = {
+                'title': product.title,
+                'price': product.price,
+                'rating': product.rating,
+                'reviews_count': product.reviews_count,
+                'url': product.url,
+                'image_url': product.image_url,
+                'availability': product.availability,
+                'brand': product.brand,
+                'features': product.features,
+                'scraped_at': product.scraped_at
+            }
+            products_data.append(product_dict)
         
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(products_data, f, indent=2, ensure_ascii=False)
         
         logger.info(f"Saved {len(products)} products to {filename}")
+
+
+# Example usage and testing
+async def test_enhanced_scraper():
+    """Test the enhanced scraper with proxy support"""
+    print("Testing Enhanced Amazon Scraper with Proxy Support...")
+    print("=" * 60)
+    
+    # Example proxy configurations
+    proxy_options = [
+        # Option 1: Use environment variables
+        # Set HTTP_PROXY=http://your-proxy:port or HTTPS_PROXY=http://your-proxy:port
+        
+        # Option 2: Use proxy list
+        # ["http://proxy1:8080", "http://proxy2:8080", "socks5://proxy3:1080"]
+        
+        # Option 3: Load from proxies.txt file (automatically loaded)
+        None  # Will load from proxies.txt if it exists
+    ]
+    
+    async with AmazonScraper(
+        min_delay=5, 
+        max_delay=8, 
+        max_retries=3,
+        proxy_list=proxy_options[0],
+        rotate_proxies=True
+    ) as scraper:
+        
+        # Show proxy status
+        if scraper.proxy_list:
+            print(f"✓ Using {len(scraper.proxy_list)} proxies with rotation")
+        else:
+            print("⚠ No proxies configured - using direct connection")
+        
+        # Test search
+        print("\n1. Testing product search...")
+        query = "wireless mouse"
+        urls = await scraper.search_products(query, max_pages=1)
+        
+        if urls:
+            print(f"✓ Found {len(urls)} product URLs")
+            print(f"Sample URLs:")
+            for url in urls[:3]:
+                print(f"  - {url}")
+            
+            # Test product scraping
+            print(f"\n2. Testing product detail scraping...")
+            product = await scraper.scrape_product_page(urls[0])
+            
+            if product:
+                print(f"\n✓ Successfully scraped product:")
+                print(f"  Title: {product.title}")
+                print(f"  Price: ${product.price}")
+                print(f"  Rating: {product.rating} stars")
+                print(f"  Reviews: {product.reviews_count}")
+                print(f"  Availability: {product.availability}")
+                print(f"\n✅ SCRAPER IS WORKING!")
+                return True
+            else:
+                print("✗ Failed to scrape product details")
+                return False
+        else:
+            print("✗ No product URLs found")
+            return False
+
+
+async def test_proxy_only():
+    """Test proxy connectivity only"""
+    print("Testing Proxy Connectivity...")
+    print("=" * 40)
+    
+    # Test with a simple HTTP request to verify proxy works
+    test_proxies = [
+        # Add your proxies here or set environment variables
+        # "http://your-proxy:8080"
+    ]
+    
+    async with AmazonScraper(proxy_list=test_proxies) as scraper:
+        if not scraper.proxy_list:
+            print("⚠ No proxies configured")
+            return False
+        
+        print(f"Testing {len(scraper.proxy_list)} proxies...")
+        
+        for i, proxy in enumerate(scraper.proxy_list):
+            print(f"\nTesting proxy {i+1}: {proxy}")
+            try:
+                # Simple test request
+                headers = scraper._get_random_headers()
+                timeout = aiohttp.ClientTimeout(total=10)
+                
+                async with aiohttp.ClientSession(timeout=timeout) as session:
+                    async with session.get('https://httpbin.org/ip', proxy=proxy, headers=headers) as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            print(f"✓ Proxy works! IP: {data.get('origin', 'Unknown')}")
+                        else:
+                            print(f"✗ Proxy failed with status {response.status}")
+            except Exception as e:
+                print(f"✗ Proxy error: {e}")
+        
+        return True
 
 
 async def main():
@@ -442,5 +647,14 @@ async def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    asyncio.run(main())
+    import sys
+    
+    if len(sys.argv) > 1 and sys.argv[1] == "--test-proxy":
+        # Test proxy connectivity only
+        result = asyncio.run(test_proxy_only())
+    else:
+        # Run the full scraper test
+        result = asyncio.run(test_enhanced_scraper())
+    
+    print(f"\n{'='*60}")
+    print(f"Final Result: {'✅ SUCCESS' if result else '❌ FAILED'}")

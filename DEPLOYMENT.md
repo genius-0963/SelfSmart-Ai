@@ -71,7 +71,7 @@ az container create \
   --name smartshelf-chat \
   --image smartshelf-chat:latest \
   --ports 8001 \
-  --environment-variables OPENAI_API_KEY=$OPENAI_API_KEY ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY
+  --environment-variables OPENAI_API_KEY=$OPENAI_API_KEY DEEPSEEK_API_KEY=$DEEPSEEK_API_KEY
 ```
 
 ## 🔧 Configuration
@@ -79,9 +79,9 @@ az container create \
 ### Required Environment Variables
 
 ```bash
-# API Keys (Required)
+# API Keys (Required - use one)
 OPENAI_API_KEY=sk-your-openai-key
-ANTHROPIC_API_KEY=your-anthropic-key
+DEEPSEEK_API_KEY=sk-your-deepseek-key
 
 # Service Configuration
 DEBUG=false
@@ -129,7 +129,7 @@ docker run -d \
   --name smartshelf-chat \
   -p 8001:8001 \
   -e OPENAI_API_KEY=$OPENAI_API_KEY \
-  -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
+  -e DEEPSEEK_API_KEY=$DEEPSEEK_API_KEY \
   -v $(pwd)/data:/app/data \
   smartshelf-chat:latest
 ```
@@ -269,7 +269,7 @@ jobs:
    - Verify all files are copied correctly
 
 2. **API Key Issues**
-   - Ensure OPENAI_API_KEY and ANTHROPIC_API_KEY are set
+   - Ensure OPENAI_API_KEY or DEEPSEEK_API_KEY is set
    - Check for typos in environment variables
 
 3. **Network Issues**

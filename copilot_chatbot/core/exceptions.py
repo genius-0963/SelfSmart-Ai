@@ -18,7 +18,7 @@ class CopilotException(Exception):
         details: Optional[Dict[str, Any]] = None
     ):
         """
-        Initialize Copilot exception.
+        Initialize Copilot exception.  
         
         Args:
             message: Human-readable error message
