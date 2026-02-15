@@ -1,904 +1,733 @@
-# 🏪 SmartShelf AI - Intelligent Retail Analytics Platform
+# SmartSelf AI - Intelligent Self-Improvement Platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18.2+-blue.svg)](https://reactjs.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
+[![Production Ready](https://img.shields.io/badge/Production-Ready-brightgreen.svg)](https://github.com/your-org/smartself-ai)
 
----
+## Product Overview
 
-## 🎯 Overview
+**SmartSelf AI** is a production-grade intelligent self-improvement platform that leverages advanced AI technologies to provide personalized coaching, habit tracking, and cognitive enhancement tools. The platform combines conversational AI, data analytics, and behavioral science to deliver actionable insights for personal and professional growth.
 
-**SmartShelf AI** is a comprehensive intelligent retail analytics platform that combines advanced machine learning, natural language processing, and real-time data visualization to transform retail operations. The platform provides AI-powered demand forecasting, dynamic pricing optimization, inventory intelligence, and an intelligent conversational copilot.
+Built with enterprise-grade architecture, SmartSelf AI serves individuals, teams, and organizations seeking measurable performance improvement through AI-driven personal development.
 
-### ✨ Key Features
+## Core Features
 
-- **🤖 AI Copilot Chat**: Natural language conversations with contextual business intelligence
-- **📊 Demand Forecasting**: Prophet & LSTM-based predictive analytics with 95%+ accuracy
-- **💰 Dynamic Pricing**: AI-driven price optimization based on market trends and demand
-- **📦 Inventory Intelligence**: Automated stock alerts and replenishment recommendations
-- **🔍 Semantic Search**: Vector-based product and knowledge discovery
-- **📈 Real-time Dashboard**: Interactive analytics with live data updates
-- **🌐 Global Ready**: Multi-language support and worldwide deployment capability
+### Personal Development
+- **AI-Powered Coaching**: 24/7 conversational coaching with context-aware responses
+- **Habit Tracking**: Intelligent habit formation with predictive analytics
+- **Goal Management**: SMART goal setting with progress tracking and milestone celebrations
+- **Performance Analytics**: Comprehensive dashboards showing growth metrics and trends
 
----
+### Cognitive Enhancement
+- **Memory Palace**: Spaced repetition learning with AI-optimized scheduling
+- **Skill Assessment**: AI-driven skill gap analysis and personalized learning paths
+- **Productivity Insights**: Time tracking and focus optimization recommendations
+- **Mental Wellness**: Sentiment analysis and stress management tools
 
-## 🏗️ System Architecture
+### Team & Enterprise
+- **Team Analytics**: Aggregate performance metrics and team dynamics insights
+- **Collaborative Goals**: Shared objectives with progress synchronization
+- **Leadership Dashboard**: Management tools for team development tracking
+- **API Integration**: Seamless integration with existing enterprise systems
 
-### High-Level Architecture Diagram
+### AI Features
+- **Conversational Intelligence**: Natural language understanding with contextual memory
+- **Predictive Analytics**: Machine learning models for behavior prediction and optimization
+- **Personalized Recommendations**: AI-driven suggestions based on user patterns and goals
+- **Adaptive Learning**: Continuous improvement of coaching strategies through user feedback
+
+## System Architecture
 
 ```mermaid
 graph TB
-    subgraph "Frontend Layer"
-        A[React Dashboard] --> B[Real-time Charts]
-        A --> C[Chat Interface]
-        A --> D[Data Upload]
+    subgraph "Client Layer"
+        A[Web App] --> B[Mobile App]
+        A --> C[Desktop App]
+        B --> D[API Client]
     end
     
-    subgraph "API Gateway"
-        E[FastAPI Backend]
-        F[CORS Middleware]
-        G[Authentication]
+    subgraph "CDN & Edge"
+        E[CloudFront CDN]
+        F[API Gateway]
     end
     
-    subgraph "Business Logic"
-        H[Forecast Service]
-        I[Pricing Engine]
-        J[Inventory Manager]
-        K[Analytics Service]
+    subgraph "Application Layer"
+        G[Frontend Container]
+        H[Backend API Cluster]
+        I[AI Service Cluster]
+        J[WebSocket Service]
     end
     
     subgraph "AI/ML Pipeline"
-        L[Prophet Models]
-        M[LSTM Networks]
-        N[Vector Store]
-        O[LLM Integration]
+        K[LLM Integration]
+        L[Vector Search]
+        M[Model Training]
+        N[Inference Engine]
     end
     
     subgraph "Data Layer"
-        P[SQLite/PostgreSQL]
-        Q[ChromaDB]
-        R[Redis Cache]
-        S[File Storage]
+        O[PostgreSQL Cluster]
+        P[ChromaDB Vector Store]
+        Q[Redis Cache]
+        R[S3 Data Lake]
+    end
+    
+    subgraph "External Services"
+        S[OpenAI API]
+        T[Analytics Services]
+        U[Notification Services]
     end
     
     A --> E
-    E --> H
-    E --> I
-    E --> J
-    E --> K
-    H --> L
+    E --> F
+    F --> G
+    F --> H
+    H --> I
+    H --> J
+    I --> K
+    I --> L
     I --> M
-    K --> N
-    K --> O
-    H --> P
+    I --> N
+    H --> O
     I --> P
-    J --> P
-    N --> Q
-    E --> R
-    L --> S
-    M --> S
+    H --> Q
+    M --> R
+    K --> S
+    H --> T
+    H --> U
 ```
 
-### Component Interaction Flow
+## Chat Flow Architecture
 
 ```mermaid
 sequenceDiagram
     participant U as User
     participant F as Frontend
     participant A as API Gateway
-    participant ML as ML Pipeline
-    participant DB as Database
-    participant AI as AI Copilot
+    participant C as Chat Service
+    participant V as Vector Store
+    participant L as LLM Service
+    participant D as Database
+    participant N as Notifications
     
-    U->>F: Upload Sales Data
-    F->>A: POST /api/data/upload
-    A->>DB: Store Raw Data
-    A->>ML: Trigger Model Training
-    ML->>DB: Save Trained Models
+    U->>F: Send Message
+    F->>A: POST /api/chat/message
+    A->>C: Process Chat Request
     
-    U->>F: Request Forecast
-    F->>A: GET /api/forecast/product/123
-    A->>ML: Load Prophet Model
-    ML->>DB: Get Historical Data
-    ML->>A: Return Predictions
+    C->>D: Retrieve User Context
+    C->>V: Semantic Search
+    V->>C: Relevant Context
+    
+    C->>L: Generate Response
+    L->>C: AI Response
+    
+    C->>D: Store Conversation
+    C->>N: Trigger Notifications
+    C->>A: Formatted Response
     A->>F: JSON Response
+    F->>U: Display Response
     
-    U->>F: Ask Question
-    F->>A: POST /api/copilot/chat
-    A->>AI: Process Query
-    AI->>DB: Retrieve Context
-    AI->>A: Intelligent Response
-    A->>F: Formatted Answer
+    Note over C,N: Async: Update User Model
+    C->>D: Update User Profile
+    C->>V: Update Embeddings
 ```
 
----
+## Database Management Architecture
 
-## 🎯 Use Cases & Implementation
-
-### 1. 📊 Demand Forecasting
-
-**Business Problem**: Retailers struggle with inventory optimization, leading to stockouts or overstock situations.
-
-**Solution**: Advanced time-series forecasting using Prophet and LSTM models.
-
-```python
-# Implementation Example
-from prophet import Prophet
-import pandas as pd
-
-def train_demand_forecast(sales_data):
-    model = Prophet(
-        yearly_seasonality=True,
-        weekly_seasonality=True,
-        daily_seasonality=True,
-        changepoint_prior_scale=0.05
-    )
-    model.fit(sales_data)
-    return model
+```mermaid
+erDiagram
+    users {
+        uuid id PK
+        string email UK
+        string username UK
+        jsonb profile
+        timestamp created_at
+        timestamp updated_at
+        boolean active
+    }
+    
+    sessions {
+        uuid id PK
+        uuid user_id FK
+        timestamp started_at
+        timestamp ended_at
+        jsonb metadata
+        string session_type
+    }
+    
+    conversations {
+        uuid id PK
+        uuid user_id FK
+        uuid session_id FK
+        jsonb messages
+        timestamp created_at
+        string context_type
+    }
+    
+    goals {
+        uuid id PK
+        uuid user_id FK
+        string title
+        text description
+        jsonb milestones
+        string status
+        timestamp target_date
+        timestamp created_at
+    }
+    
+    habits {
+        uuid id PK
+        uuid user_id FK
+        string name
+        jsonb schedule
+        integer streak_count
+        timestamp last_completed
+        boolean active
+    }
+    
+    analytics {
+        uuid id PK
+        uuid user_id FK
+        string metric_type
+        decimal value
+        jsonb metadata
+        timestamp recorded_at
+    }
+    
+    users ||--o{ sessions : has
+    users ||--o{ conversations : has
+    users ||--o{ goals : sets
+    users ||--o{ habits : tracks
+    users ||--o{ analytics : generates
+    sessions ||--o{ conversations : contains
 ```
 
-**Key Features**:
-- Multi-seasonality detection (daily, weekly, yearly patterns)
-- Holiday effect modeling
-- Trend change point detection
-- 95% confidence intervals
-- Automated model retraining
+## Vector DB / RAG Pipeline
 
-### 2. 💰 Dynamic Pricing Optimization
-
-**Business Problem**: Static pricing leads to lost revenue and competitive disadvantages.
-
-**Solution**: AI-powered pricing engine considering demand elasticity, competitor pricing, and market trends.
-
-```python
-# Pricing Optimization Logic
-def optimize_price(base_price, demand_score, competitor_price, inventory_level):
-    elastic_factor = calculate_elasticity(demand_score)
-    competitor_factor = min(1.1, competitor_price / base_price)
-    inventory_factor = 1.0 if inventory_level > 30 else 1.15
+```mermaid
+graph LR
+    subgraph "Data Ingestion"
+        A[User Data] --> B[Text Processing]
+        C[Documents] --> B
+        D[Conversations] --> B
+    end
     
-    optimized_price = base_price * elastic_factor * competitor_factor * inventory_factor
-    return round(optimized_price, 2)
+    subgraph "Embedding Pipeline"
+        B --> E[Chunking Strategy]
+        E --> F[Sentence Transformers]
+        F --> G[Vector Embeddings]
+    end
+    
+    subgraph "Vector Storage"
+        G --> H[ChromaDB]
+        H --> I[Metadata Index]
+        H --> J[Similarity Index]
+    end
+    
+    subgraph "Retrieval Pipeline"
+        K[User Query] --> L[Query Embedding]
+        L --> M[Vector Search]
+        M --> N[Top-K Results]
+        N --> O[Context Ranking]
+    end
+    
+    subgraph "Generation Pipeline"
+        O --> P[Prompt Builder]
+        P --> Q[LLM Service]
+        Q --> R[Response Generation]
+        R --> S[Output Formatting]
+    end
+    
+    subgraph "Feedback Loop"
+        S --> T[User Feedback]
+        T --> U[Embedding Update]
+        U --> H
+    end
 ```
 
-**Key Features**:
-- Real-time price adjustments
-- Competitor price monitoring
-- Demand elasticity modeling
-- Inventory-aware pricing
-- A/B testing framework
-
-### 3. 🤖 AI Copilot Assistant
-
-**Business Problem**: Retail managers need quick insights from complex data without technical expertise.
-
-**Solution**: Natural language interface with RAG (Retrieval-Augmented Generation) for contextual responses.
-
-```python
-# AI Copilot Query Processing
-async def process_user_query(query: str):
-    # Intent Recognition
-    intent = await classify_intent(query)
-    
-    # Context Retrieval
-    context = await vector_search(query, top_k=5)
-    
-    # LLM Generation
-    response = await llm.generate(
-        prompt=query,
-        context=context,
-        system_prompt="You are a retail intelligence assistant..."
-    )
-    
-    return format_response(response, intent)
-```
-
-**Key Features**:
-- Multi-language support (English, Spanish, French, German)
-- Sentiment analysis on customer feedback
-- Aspect-based insights (price, quality, service)
-- Real-time data integration
-- Source citation and transparency
-
-### 4. 📦 Inventory Intelligence
-
-**Business Problem**: Manual inventory management is inefficient and error-prone.
-
-**Solution**: Automated inventory monitoring with intelligent alerts and recommendations.
-
-```python
-# Inventory Alert System
-def check_inventory_levels():
-    low_stock = get_products_below_threshold()
-    overstock = get_overstocked_products()
-    seasonal_items = get_seasonal_products()
-    
-    alerts = []
-    for product in low_stock:
-        alerts.append({
-            'type': 'reorder',
-            'product_id': product.id,
-            'urgency': calculate_urgency(product),
-            'recommended_quantity': calculate_reorder_point(product)
-        })
-    
-    return alerts
-```
-
-**Key Features**:
-- Real-time stock monitoring
-- Predictive reorder points
-- Seasonal demand adjustment
-- Supplier lead time integration
-- Automated purchase recommendations
-
----
-
-## 🛠️ Technology Stack & Rationale
-
-### Frontend Technologies
-
-| Technology | Purpose | Why We Use It |
-|------------|---------|---------------|
-| **React 18.2** | UI Framework | Component-based architecture, excellent ecosystem, hooks for state management |
-| **TypeScript** | Type Safety | Catch errors at compile-time, better IDE support, scalable codebase |
-| **TailwindCSS** | Styling | Rapid UI development, utility-first approach, consistent design system |
-| **Recharts** | Data Visualization | Declarative charting, React integration, beautiful responsive charts |
-| **Zustand** | State Management | Lightweight, simple API, better than Redux for our use case |
-| **React Router** | Navigation | Declarative routing, route-based code splitting |
-| **Socket.io** | Real-time Updates | WebSocket support, fallback mechanisms, event-driven architecture |
-
-### Backend Technologies
-
-| Technology | Purpose | Why We Use It |
-|------------|---------|---------------|
-| **FastAPI** | API Framework | Auto-generated docs, async support, type hints, excellent performance |
-| **Pydantic** | Data Validation | Request/response validation, OpenAPI integration, runtime type checking |
-| **SQLAlchemy** | ORM | Database abstraction, migration tools, relationship management |
-| **Uvicorn** | ASGI Server | High performance, async support, WebSocket handling |
-| **Alembic** | Database Migrations | Version control for schema, rollback capabilities |
-
-### AI/ML Technologies
-
-| Technology | Purpose | Why We Use It |
-|------------|---------|---------------|
-| **Prophet** | Time Series Forecasting | Facebook's battle-tested model, handles seasonality automatically |
-| **TensorFlow/Keras** | Deep Learning | LSTM networks for complex patterns, GPU acceleration |
-| **scikit-learn** | Classical ML | Preprocessing, feature engineering, evaluation metrics |
-| **OpenAI API** | LLM Integration | GPT-4 for reasoning, natural language understanding |
-| **ChromaDB** | Vector Database | Local deployment, semantic search, efficient similarity matching |
-| **Sentence Transformers** | Embeddings | Open-source models, no API keys needed, multilingual support |
-
-### Data & Storage Technologies
-
-| Technology | Purpose | Why We Use It |
-|------------|---------|---------------|
-| **PostgreSQL** | Primary Database | ACID compliance, complex queries, JSON support, scalability |
-| **Redis** | Caching | In-memory storage, pub/sub, session management |
-| **Pandas** | Data Processing | Industry standard, time series support, data manipulation |
-| **NumPy** | Numerical Computing | Performance optimization, array operations |
-
-### DevOps & Deployment
-
-| Technology | Purpose | Why We Use It |
-|------------|---------|---------------|
-| **Docker** | Containerization | Consistent environments, easy deployment, microservices |
-| **GitHub Actions** | CI/CD | Automated testing, deployment pipelines |
-| **Nginx** | Reverse Proxy | Load balancing, SSL termination, static file serving |
-| **Prometheus** | Monitoring | Metrics collection, alerting, performance tracking |
-
----
-
-## 🚀 Deployment on AWS
-
-### Architecture Overview
+## Deployment Architecture
 
 ```mermaid
 graph TB
-    subgraph "AWS Cloud"
-        subgraph "Frontend"
-            CF[CloudFront CDN]
-            S3[S3 Static Hosting]
-        end
-        
-        subgraph "Application Layer"
-            ALB[Application Load Balancer]
-            ECS[ECS Fargate Cluster]
-            ASG[Auto Scaling Group]
-        end
-        
-        subgraph "Data Layer"
-            RDS[RDS PostgreSQL]
-            EC[ElastiCache Redis]
-            S3_DATA[S3 Data Lake]
-        end
-        
-        subgraph "AI/ML Services"
-            SAG[SageMaker Endpoints]
-            LMB[Lambda Functions]
-        end
-        
-        subgraph "Monitoring"
-            CW[CloudWatch]
-            XR[X-Ray]
-        end
+    subgraph "Edge Layer"
+        A[CloudFront CDN]
+        B[WAF Shield]
+        C[Route 53 DNS]
     end
     
-    CF --> S3
-    CF --> ALB
-    ALB --> ECS
-    ECS --> RDS
-    ECS --> EC
-    ECS --> SAG
-    ECS --> S3_DATA
-    LMB --> RDS
-    CW --> ECS
-    XR --> ECS
+    subgraph "Load Balancing"
+        D[Application Load Balancer]
+        E[Network Load Balancer]
+    end
+    
+    subgraph "Compute Layer"
+        F[ECS Fargate Frontend]
+        G[ECS Fargate Backend]
+        H[ECS Fargate AI Services]
+        I[Lambda Functions]
+    end
+    
+    subgraph "Data Layer"
+        J[RDS PostgreSQL]
+        K[ElastiCache Redis]
+        L[ChromaDB Cluster]
+        M[S3 Storage]
+    end
+    
+    subgraph "Monitoring & Security"
+        N[CloudWatch]
+        O[X-Ray]
+        P[Secrets Manager]
+        Q[VPC Security Groups]
+    end
+    
+    C --> A
+    A --> B
+    B --> D
+    D --> F
+    D --> G
+    D --> H
+    E --> I
+    
+    F --> J
+    G --> J
+    G --> K
+    H --> L
+    H --> M
+    
+    F --> N
+    G --> N
+    H --> N
+    G --> O
+    
+    J --> P
+    K --> P
+    L --> P
+    
+    subgraph "VPC"
+        Q
+    end
 ```
 
-### Step-by-Step AWS Deployment
+## Technology Stack
 
-#### 1. Prerequisites
+### Frontend Technologies
+| Technology | Purpose | Rationale |
+|------------|---------|-----------|
+| **React 18.2** | UI Framework | Component-based architecture with concurrent features, excellent ecosystem, and hooks-based state management |
+| **TypeScript** | Type Safety | Compile-time error detection, enhanced IDE support, and scalable codebase maintenance |
+| **TailwindCSS** | Styling System | Utility-first CSS framework enabling rapid UI development with consistent design patterns |
+| **Zustand** | State Management | Lightweight state management solution with minimal boilerplate and excellent performance |
+| **Recharts** | Data Visualization | Declarative charting library with React integration and responsive design capabilities |
+| **Socket.io** | Real-time Communication | WebSocket-based real-time updates with fallback mechanisms and event-driven architecture |
 
-```bash
-# Install AWS CLI
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
+### Backend Technologies
+| Technology | Purpose | Rationale |
+|------------|---------|-----------|
+| **FastAPI** | API Framework | High-performance async framework with automatic OpenAPI documentation and type hints |
+| **Pydantic** | Data Validation | Runtime type checking and data validation with seamless OpenAPI integration |
+| **SQLAlchemy** | ORM | Database abstraction layer with migration support and relationship management |
+| **Uvicorn** | ASGI Server | High-performance async server with WebSocket support and HTTP/2 capabilities |
+| **Alembic** | Database Migrations | Version control for database schema with rollback capabilities |
 
-# Configure AWS credentials
-aws configure
-```
+### AI/ML Technologies
+| Technology | Purpose | Rationale |
+|------------|---------|-----------|
+| **OpenAI API** | LLM Integration | State-of-the-art language models for reasoning and natural language understanding |
+| **ChromaDB** | Vector Database | Local deployment capability with efficient semantic search and similarity matching |
+| **Sentence Transformers** | Embeddings | Open-source embedding models with multilingual support and no API dependencies |
+| **scikit-learn** | Classical ML | Comprehensive machine learning library for preprocessing and traditional ML algorithms |
+| **pandas/numpy** | Data Processing | Industry-standard libraries for data manipulation and numerical computing |
 
-#### 2. Infrastructure Setup with CloudFormation
+### Infrastructure Technologies
+| Technology | Purpose | Rationale |
+|------------|---------|-----------|
+| **Docker** | Containerization | Consistent deployment environments and microservices architecture support |
+| **AWS ECS Fargate** | Container Orchestration | Serverless container execution with automatic scaling and patch management |
+| **PostgreSQL** | Primary Database | ACID compliance, complex query support, and proven scalability |
+| **Redis** | Caching Layer | In-memory data structure store for high-performance caching and session management |
+| **S3** | Object Storage | Scalable object storage with durability guarantees and lifecycle management |
 
-Create `infrastructure.yaml`:
-
-```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Description: SmartShelf AI Infrastructure
-
-Parameters:
-  Environment:
-    Type: String
-    Default: production
-    AllowedValues: [development, staging, production]
-
-Resources:
-  # VPC Configuration
-  VPC:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: 10.0.0.0/16
-      EnableDnsHostnames: true
-      EnableDnsSupport: true
-      Tags:
-        - Key: Name
-          Value: !Sub '${Environment}-smartshelf-vpc'
-
-  # Application Load Balancer
-  LoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      Scheme: internet-facing
-      Type: application
-      Subnets:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
-      SecurityGroups:
-        - !Ref LoadBalancerSecurityGroup
-
-  # ECS Cluster
-  ECSCluster:
-    Type: AWS::ECS::Cluster
-    Properties:
-      ClusterName: !Sub '${Environment}-smartshelf-cluster'
-      CapacityProviders:
-        - FARGATE
-        - FARGATE_SPOT
-
-  # RDS PostgreSQL
-  Database:
-    Type: AWS::RDS::DBInstance
-    Properties:
-      DBInstanceIdentifier: !Sub '${Environment}-smartshelf-db'
-      DBInstanceClass: db.t3.medium
-      Engine: postgres
-      EngineVersion: '15.4'
-      AllocatedStorage: 100
-      StorageType: gp2
-      MasterUsername: smartshelf
-      MasterUserPassword: !Ref DatabasePassword
-      VPCSecurityGroups:
-        - !Ref DatabaseSecurityGroup
-
-  # ElastiCache Redis
-  CacheCluster:
-    Type: AWS::ElastiCache::CacheCluster
-    Properties:
-      CacheNodeType: cache.t3.micro
-      Engine: redis
-      NumCacheNodes: 1
-      VpcSecurityGroupIds:
-        - !Ref CacheSecurityGroup
-
-Outputs:
-  LoadBalancerDNS:
-    Description: Load Balancer DNS Name
-    Value: !GetAtt LoadBalancer.DNSName
-    Export:
-      Name: !Sub '${Environment}-LoadBalancerDNS'
-```
-
-Deploy infrastructure:
-
-```bash
-aws cloudformation deploy \
-  --template-file infrastructure.yaml \
-  --stack-name smartshelf-infrastructure \
-  --parameter-overrides Environment=production \
-  --capabilities CAPABILITY_IAM
-```
-
-#### 3. Docker Configuration
-
-Create `Dockerfile.prod`:
-
-```dockerfile
-# Multi-stage build for optimization
-FROM python:3.11-slim as builder
-
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-FROM python:3.11-slim as runtime
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
-
-COPY . .
-
-EXPOSE 8000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8000/health || exit 1
-
-CMD ["uvicorn", "copilot_chatbot.main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
-#### 4. ECS Task Definition
-
-Create `task-definition.json`:
-
-```json
-{
-  "family": "smartshelf-app",
-  "networkMode": "awsvpc",
-  "requiresCompatibilities": ["FARGATE"],
-  "cpu": "1024",
-  "memory": "2048",
-  "executionRoleArn": "arn:aws:iam::ACCOUNT:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::ACCOUNT:role/ecsTaskRole",
-  "containerDefinitions": [
-    {
-      "name": "smartshelf-api",
-      "image": "ACCOUNT.dkr.ecr.REGION.amazonaws.com/smartshelf-api:latest",
-      "portMappings": [
-        {
-          "containerPort": 8000,
-          "protocol": "tcp"
-        }
-      ],
-      "environment": [
-        {
-          "name": "DATABASE_URL",
-          "value": "postgresql://smartshelf:PASSWORD@HOST:5432/smartshelf"
-        }
-      ],
-      "secrets": [
-        {
-          "name": "OPENAI_API_KEY",
-          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT:secret:smartshelf/openai-key"
-        }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/smartshelf",
-          "awslogs-region": "us-west-2",
-          "awslogs-stream-prefix": "ecs"
-        }
-      },
-      "healthCheck": {
-        "command": ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"],
-        "interval": 30,
-        "timeout": 5,
-        "retries": 3,
-        "startPeriod": 60
-      }
-    }
-  ]
-}
-```
-
-#### 5. Deployment Script
-
-Create `deploy.sh`:
-
-```bash
-#!/bin/bash
-
-set -e
-
-# Configuration
-AWS_REGION="us-west-2"
-ECR_REPOSITORY="smartshelf-api"
-ECS_CLUSTER="smartshelf-cluster"
-ECS_SERVICE="smartshelf-service"
-
-echo "🚀 Starting SmartShelf AI deployment to AWS..."
-
-# Build and push Docker image
-echo "📦 Building Docker image..."
-docker build -f Dockerfile.prod -t $ECR_REPOSITORY:latest .
-
-# Get AWS account ID
-ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-ECR_URI="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
-
-# Tag and push to ECR
-echo "🏷️ Tagging and pushing to ECR..."
-docker tag $ECR_REPOSITORY:latest $ECR_URI/$ECR_REPOSITORY:latest
-aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_URI
-docker push $ECR_URI/$ECR_REPOSITORY:latest
-
-# Update ECS service
-echo "🔄 Updating ECS service..."
-aws ecs update-service \
-  --cluster $ECS_CLUSTER \
-  --service $ECS_SERVICE \
-  --force-new-deployment
-
-# Wait for deployment to complete
-echo "⏳ Waiting for deployment to complete..."
-aws ecs wait services-stable \
-  --cluster $ECS_CLUSTER \
-  --services $ECS_SERVICE
-
-echo "✅ Deployment completed successfully!"
-echo "🌐 Application available at: https://your-domain.com"
-```
-
-#### 6. CI/CD Pipeline with GitHub Actions
-
-Create `.github/workflows/deploy.yml`:
-
-```yaml
-name: Deploy to AWS
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-      - name: Run tests
-        run: |
-          python -m pytest tests/
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v3
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-      - name: Build, tag, and push image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: smartshelf-api
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -f Dockerfile.prod -t $ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      - name: Deploy to ECS
-        run: |
-          ./deploy.sh
-```
-
-#### 7. Monitoring and Logging
-
-Set up CloudWatch monitoring:
-
-```bash
-# Create CloudWatch alarm for high CPU utilization
-aws cloudwatch put-metric-alarm \
-  --alarm-name SmartShelf-High-CPU \
-  --alarm-description "High CPU utilization" \
-  --metric-name CPUUtilization \
-  --namespace AWS/ECS \
-  --statistic Average \
-  --period 300 \
-  --threshold 80 \
-  --comparison-operator GreaterThanThreshold \
-  --evaluation-periods 2
-
-# Create log group
-aws logs create-log-group --log-group-name /ecs/smartshelf
-
-# Set up retention policy
-aws logs put-retention-policy \
-  --log-group-name /ecs/smartshelf \
-  --retention-in-days 30
-```
-
----
-
-## 📊 Performance Metrics & SLAs
-
-### System Performance
-
-| Metric | Target | Current | Monitoring |
-|--------|--------|---------|------------|
-| **API Response Time** | <200ms | 150ms (P95) | CloudWatch |
-| **Chat Response Time** | <2s | 1.2s (P95) | CloudWatch |
-| **Database Query Time** | <100ms | 45ms (P95) | RDS Enhanced Monitoring |
-| **System Uptime** | >99.9% | 99.95% | CloudWatch Alarms |
-| **Concurrent Users** | 10,000+ | 15,000+ tested | Load Testing |
-
-### ML Model Performance
-
-| Model | Accuracy | Latency | Retraining Frequency |
-|-------|----------|---------|---------------------|
-| **Demand Forecast** | 95.2% | 200ms | Weekly |
-| **Price Optimization** | 89.7% | 150ms | Daily |
-| **Inventory Prediction** | 92.1% | 100ms | Weekly |
-| **Sentiment Analysis** | 94.5% | 300ms | Monthly |
-
----
-
-## 🔧 Local Development Setup
+## Installation & Environment Setup
 
 ### Prerequisites
-
 - **Python 3.11+**
 - **Node.js 18+**
 - **Docker & Docker Compose**
-- **PostgreSQL 15+**
-- **Redis 7+**
+- **AWS CLI** (for deployment)
+- **PostgreSQL 15+** (local development)
+
+### Environment Variables
+
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `DATABASE_URL` | PostgreSQL connection string | Yes | - |
+| `REDIS_URL` | Redis connection string | Yes | - |
+| `OPENAI_API_KEY` | OpenAI API key | Yes | - |
+| `JWT_SECRET_KEY` | JWT signing secret | Yes | - |
+| `ENVIRONMENT` | Deployment environment | No | `development` |
+| `LOG_LEVEL` | Logging verbosity | No | `INFO` |
+| `CORS_ORIGINS` | Allowed CORS origins | No | `http://localhost:3000` |
+| `CHROMA_PERSIST_DIRECTORY` | Vector DB storage path | No | `./data/chroma` |
+| `MAX_CONVERSATION_LENGTH` | Max conversation history | No | `50` |
+| `EMBEDDING_MODEL` | Sentence transformer model | No | `all-MiniLM-L6-v2` |
 
 ### Quick Start
 
 ```bash
 # Clone repository
-git clone https://github.com/your-org/smartshelf-ai.git
-cd smartshelf-ai
+git clone https://github.com/your-org/smartself-ai.git
+cd smartself-ai
 
 # Set up environment
 cp .env.example .env
-# Edit .env with your API keys
+# Edit .env with your configuration
 
-# Start services with Docker Compose
-docker-compose up -d
+# Start infrastructure services
+docker-compose up -d postgres redis chromadb
 
 # Install backend dependencies
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
+
+# Run database migrations
+alembic upgrade head
 
 # Install frontend dependencies
 cd frontend
 npm install
-npm run dev
+npm run build
 
-# Train ML models
+# Start development servers
 cd ..
-python scripts/train_models.py --model all
-
-# Start backend service
-python -m copilot_chatbot.main
+uvicorn copilot_chatbot.main:app --reload --host 0.0.0.0 --port 8000 &
+cd frontend && npm run dev
 ```
+
+## Running Locally
 
 ### Development Commands
 
 ```bash
-# Backend development
+# Backend development server
 uvicorn copilot_chatbot.main:app --reload --host 0.0.0.0 --port 8000
 
-# Frontend development
+# Frontend development server
 cd frontend && npm run dev
 
-# Run tests
-pytest tests/ -v --cov=.
-
-# ML model training
-python scripts/train_models.py --model demand_forecast
-
-# Database migrations
+# Database operations
+alembic revision --autogenerate -m "Add new feature"
 alembic upgrade head
 
-# Code quality
-flake8 copilot_chatbot/
-black copilot_chatbot/
-mypy copilot_chatbot/
-```
-
----
-
-## 🧪 Testing Strategy
-
-### Test Coverage
-
-- **Unit Tests**: 85%+ coverage
-- **Integration Tests**: API endpoints, database operations
-- **End-to-End Tests**: User workflows, ML pipelines
-- **Performance Tests**: Load testing, stress testing
-- **Security Tests**: Penetration testing, vulnerability scanning
-
-### Running Tests
-
-```bash
-# Unit tests
-pytest tests/unit/ -v
-
-# Integration tests
+# Testing
+pytest tests/ -v --cov=.
 pytest tests/integration/ -v
-
-# End-to-end tests
 pytest tests/e2e/ -v
 
-# Performance tests
-locust -f tests/performance/locustfile.py --host=http://localhost:8000
+# Code quality
+black copilot_chatbot/
+flake8 copilot_chatbot/
+mypy copilot_chatbot/
 
-# Coverage report
-pytest --cov=copilot_chatbot --cov-report=html
+# Docker development
+docker-compose -f docker-compose.dev.yml up
 ```
 
----
+### Production Build
 
-## 🔒 Security Considerations
+```bash
+# Build production Docker images
+docker build -f Dockerfile.prod -t smartself-ai:latest .
+
+# Run production stack
+docker-compose -f docker-compose.prod.yml up -d
+
+# Health checks
+curl http://localhost:8000/health
+curl http://localhost:3000
+```
+
+## API Documentation
+
+### Authentication Endpoints
+
+#### POST /api/auth/register
+```json
+// Request
+{
+  "email": "user@example.com",
+  "username": "johndoe",
+  "password": "securepassword123",
+  "profile": {
+    "first_name": "John",
+    "last_name": "Doe",
+    "timezone": "UTC-5"
+  }
+}
+
+// Response
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "user": {
+    "id": "uuid",
+    "email": "user@example.com",
+    "username": "johndoe"
+  }
+}
+```
+
+#### POST /api/auth/login
+```json
+// Request
+{
+  "email": "user@example.com",
+  "password": "securepassword123"
+}
+
+// Response
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "user": {
+    "id": "uuid",
+    "email": "user@example.com",
+    "username": "johndoe"
+  }
+}
+```
+
+### Chat Endpoints
+
+#### POST /api/chat/message
+```json
+// Request
+{
+  "message": "How can I improve my productivity?",
+  "context": {
+    "session_id": "uuid",
+    "goal_context": ["productivity", "time management"]
+  }
+}
+
+// Response
+{
+  "id": "uuid",
+  "message": "Based on your recent activity patterns...",
+  "suggestions": [
+    "Try the Pomodoro technique",
+    "Review your time tracking data"
+  ],
+  "metadata": {
+    "response_time_ms": 1250,
+    "context_used": true,
+    "confidence_score": 0.89
+  }
+}
+```
+
+#### GET /api/chat/history
+```json
+// Query Parameters
+// ?session_id=uuid&limit=20&offset=0
+
+// Response
+{
+  "conversations": [
+    {
+      "id": "uuid",
+      "messages": [
+        {
+          "role": "user",
+          "content": "How can I improve my productivity?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "assistant",
+          "content": "Based on your recent activity patterns...",
+          "timestamp": "2024-01-15T10:30:02Z"
+        }
+      ],
+      "session_id": "uuid",
+      "created_at": "2024-01-15T10:30:00Z"
+    }
+  ],
+  "total": 45,
+  "has_more": true
+}
+```
+
+### Goals Endpoints
+
+#### POST /api/goals
+```json
+// Request
+{
+  "title": "Learn Python Programming",
+  "description": "Master Python development fundamentals",
+  "category": "skill_development",
+  "target_date": "2024-06-30",
+  "milestones": [
+    {
+      "title": "Complete Python basics",
+      "target_date": "2024-02-28",
+      "criteria": "Finish online course modules 1-5"
+    }
+  ]
+}
+
+// Response
+{
+  "id": "uuid",
+  "title": "Learn Python Programming",
+  "status": "active",
+  "progress": 0.15,
+  "created_at": "2024-01-15T10:30:00Z",
+  "milestones": [...]
+}
+```
+
+## Security Considerations
 
 ### Authentication & Authorization
-
-- JWT-based authentication
-- Role-based access control (RBAC)
-- API key management
-- OAuth 2.0 integration
+- **JWT-based Authentication**: Stateless authentication with refresh token rotation
+- **Role-Based Access Control**: Granular permissions for different user roles
+- **API Rate Limiting**: Prevent abuse with configurable rate limits per endpoint
+- **Session Management**: Secure session handling with automatic expiration
 
 ### Data Protection
-
-- Encryption at rest (AES-256)
-- Encryption in transit (TLS 1.3)
-- PII data masking
-- GDPR compliance
+- **Encryption at Rest**: AES-256 encryption for sensitive data in PostgreSQL
+- **Encryption in Transit**: TLS 1.3 for all API communications
+- **PII Data Masking**: Automatic masking of personally identifiable information
+- **GDPR Compliance**: Data portability and right-to-be-forgotten implementations
 
 ### Infrastructure Security
+- **VPC Isolation**: Network segmentation with private subnets for databases
+- **Security Groups**: Fine-grained network access controls
+- **WAF Protection**: AWS WAF rules for common attack patterns
+- **Secrets Management**: AWS Secrets Manager for sensitive configuration
+- **Audit Logging**: Comprehensive audit trails for all administrative actions
 
-- VPC isolation
-- Security groups
-- WAF protection
-- DDoS mitigation
-- Regular security audits
+## Performance Optimization
 
----
+### Database Optimization
+- **Connection Pooling**: PgBouncer for efficient database connection management
+- **Query Optimization**: Indexed queries with EXPLAIN ANALYZE monitoring
+- **Read Replicas**: Read scaling for analytics queries
+- **Caching Strategy**: Redis caching for frequently accessed data
 
-## 📈 Scaling Strategy
+### Application Performance
+- **Async Processing**: Non-blocking I/O operations throughout the stack
+- **CDN Distribution**: CloudFront for static asset delivery
+- **Image Optimization**: Automatic image compression and format conversion
+- **Bundle Splitting**: Code splitting for reduced initial load times
+
+### AI/ML Optimization
+- **Model Caching**: In-memory caching of loaded models
+- **Batch Processing**: Vector operations in batches for efficiency
+- **Quantization**: Model quantization for reduced memory usage
+- **Edge Computing**: Lambda@Edge for simple AI operations
+
+## Scaling Strategy
 
 ### Horizontal Scaling
-
-- Auto Scaling Groups
-- Load balancing
-- Database read replicas
-- CDN distribution
+- **Auto Scaling Groups**: ECS service auto-scaling based on CPU/memory metrics
+- **Load Balancing**: Application Load Balancer with health checks
+- **Database Sharding**: Horizontal partitioning for large datasets
+- **Microservices**: Service decomposition for independent scaling
 
 ### Vertical Scaling
-
-- Instance size optimization
-- Memory management
-- CPU optimization
-- Storage scaling
+- **Instance Optimization**: Right-sized instances based on workload patterns
+- **Memory Management**: Efficient memory usage patterns and garbage collection
+- **Storage Scaling**: EBS volume scaling with performance optimization
 
 ### Cost Optimization
+- **Spot Instances**: Cost-effective compute for batch processing
+- **Reserved Instances**: Discounted capacity for baseline workloads
+- **Auto-scaling Policies**: Dynamic scaling based on demand patterns
+- **Resource Tagging**: Comprehensive cost allocation and monitoring
 
-- Spot instances for batch processing
-- Reserved instances for baseline
-- Auto-scaling policies
-- Resource tagging and monitoring
+## Roadmap
 
----
+### Q1 2024
+- [ ] Mobile application (iOS/Android)
+- [ ] Advanced analytics dashboard
+- [ ] Multi-tenant architecture
+- [ ] Integration with calendar systems
 
-## 🤝 Contributing Guidelines
+### Q2 2024
+- [ ] Voice interface capabilities
+- [ ] Advanced sentiment analysis
+- [ ] Team collaboration features
+- [ ] Enterprise SSO integration
+
+### Q3 2024
+- [ ] Machine learning model personalization
+- [ ] Advanced recommendation engine
+- [ ] Real-time collaboration
+- [ ] API marketplace
+
+### Q4 2024
+- [ ] Edge AI capabilities
+- [ ] Blockchain-based achievement tracking
+- [ ] Advanced gamification
+- [ ] Global expansion features
+
+## Contributing Guide
 
 ### Development Workflow
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Make changes with tests
-4. Ensure code quality (linting, formatting)
-5. Submit pull request
-6. Code review and merge
+1. **Fork** the repository and create a feature branch
+2. **Set up** development environment following installation guide
+3. **Make changes** with comprehensive tests
+4. **Ensure code quality** with linting and formatting
+5. **Submit pull request** with detailed description
+6. **Code review** and automated testing
+7. **Merge** to main branch
 
 ### Code Standards
+- **Python**: Follow PEP 8, use type hints, comprehensive docstrings
+- **TypeScript**: Strict mode enabled, proper interface definitions
+- **Testing**: Minimum 80% coverage, integration tests for APIs
+- **Documentation**: Update API docs for all endpoint changes
+- **Commits**: Conventional commit format (`feat:`, `fix:`, `docs:`, etc.)
 
-- Follow PEP 8 for Python
-- Use TypeScript for frontend
-- Write comprehensive tests
-- Document APIs with OpenAPI
-- Use conventional commits
+### Development Commands
+```bash
+# Setup development environment
+make dev-setup
 
----
+# Run all tests
+make test-all
 
-## 📞 Support & Community
+# Code quality checks
+make lint
+make format
+make type-check
 
-- **Documentation**: [docs.smartshelf.ai](https://docs.smartshelf.ai)
-- **Issues**: [GitHub Issues](https://github.com/your-org/smartshelf-ai/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/smartshelf-ai/discussions)
-- **Community**: [Discord Server](https://discord.gg/smartshelf)
-- **Email**: support@smartshelf.ai
+# Build documentation
+make docs-build
+```
 
----
-
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
+## Support
 
-## 🚀 Future Roadmap
-
-### Q1 2024
-- [ ] Mobile app development
-- [ ] Advanced analytics dashboard
-- [ ] Multi-tenant architecture
-- [ ] Real-time streaming analytics
-
-### Q2 2024
-- [ ] Computer vision for shelf monitoring
-- [ ] Advanced NLP capabilities
-- [ ] Integration with ERP systems
-- [ ] Blockchain for supply chain
-
-### Q3 2024
-- [ ] Edge computing deployment
-- [ ] Federated learning
-- [ ] Advanced recommendation engine
-- [ ] Voice interface integration
+- **Documentation**: [docs.smartself.ai](https://docs.smartself.ai)
+- **API Reference**: [api.smartself.ai/docs](https://api.smartself.ai/docs)
+- **Issues**: [GitHub Issues](https://github.com/your-org/smartself-ai/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/your-org/smartself-ai/discussions)
+- **Community**: [Discord Server](https://discord.gg/smartself)
+- **Enterprise**: enterprise@smartself.ai
 
 ---
 
-**Built with ❤️ for intelligent retail operations**  
-**🚀 Deploy globally in minutes, scale infinitely**
-
----
+**Built with precision for intelligent personal development**  
+**Deploy globally in minutes, scale infinitely**
 
 *Last updated: February 2026*
