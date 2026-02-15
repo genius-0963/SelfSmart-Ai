@@ -96,29 +96,34 @@ class DefaultConversationFlowStrategy(ConversationFlowStrategy):
                 IntentType.PRODUCT_INQUIRY: ConversationState.INFORMATION_GATHERING,
                 IntentType.SPORTS_TOPIC: ConversationState.DISCUSSION,
                 IntentType.GENERAL_QUESTION: ConversationState.QUESTION_ANSWERING,
+                IntentType.IDENTITY: ConversationState.GREETING,
                 IntentType.CONVERSATION: ConversationState.DISCUSSION
             },
             ConversationState.GREETING: {
                 IntentType.PRODUCT_INQUIRY: ConversationState.INFORMATION_GATHERING,
                 IntentType.SPORTS_TOPIC: ConversationState.DISCUSSION,
                 IntentType.GENERAL_QUESTION: ConversationState.QUESTION_ANSWERING,
+                IntentType.IDENTITY: ConversationState.GREETING,
                 IntentType.CONVERSATION: ConversationState.DISCUSSION
             },
             ConversationState.INFORMATION_GATHERING: {
                 IntentType.PRODUCT_INQUIRY: ConversationState.INFORMATION_GATHERING,
                 IntentType.GENERAL_QUESTION: ConversationState.QUESTION_ANSWERING,
+                IntentType.IDENTITY: ConversationState.GREETING,
                 IntentType.CONVERSATION: ConversationState.DISCUSSION
             },
             ConversationState.DISCUSSION: {
                 IntentType.SPORTS_TOPIC: ConversationState.DISCUSSION,
                 IntentType.PRODUCT_INQUIRY: ConversationState.INFORMATION_GATHERING,
                 IntentType.GENERAL_QUESTION: ConversationState.QUESTION_ANSWERING,
+                IntentType.IDENTITY: ConversationState.GREETING,
                 IntentType.CONVERSATION: ConversationState.DISCUSSION
             },
             ConversationState.QUESTION_ANSWERING: {
                 IntentType.GENERAL_QUESTION: ConversationState.QUESTION_ANSWERING,
                 IntentType.PRODUCT_INQUIRY: ConversationState.INFORMATION_GATHERING,
                 IntentType.SPORTS_TOPIC: ConversationState.DISCUSSION,
+                IntentType.IDENTITY: ConversationState.GREETING,
                 IntentType.CONVERSATION: ConversationState.DISCUSSION
             }
         }

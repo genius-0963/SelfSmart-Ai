@@ -323,6 +323,24 @@ class SportsResponseStrategy(ResponseStrategy):
         return f"{sport.title()} is a fantastic sport! The combination of skill, strategy, and athleticism makes it so exciting to follow and discuss.\n\nI'd love to hear your thoughts on recent games, players, or tournaments. What aspects of {sport} do you enjoy most?"
 
 
+class IdentityResponseStrategy(ResponseStrategy):
+    """Strategy for identity/name questions (when no LLM)"""
+
+    def generate_response(self, intent: Intent, context: Optional[ConversationContext] = None) -> Response:
+        text = (
+            "I'm **SmartShelf AI**, your intelligent shopping assistant! "
+            "I can help you find products, compare options, get shopping advice, and answer questions. "
+            "What would you like to explore?"
+        )
+        return Response(
+            text=text,
+            confidence=0.95,
+            intent_type=IntentType.IDENTITY,
+            follow_up_questions=["What products interest you?", "Need help choosing something?", "What can I help you with?"],
+            metadata={"strategy": "identity"}
+        )
+
+
 class ConversationResponseStrategy(ResponseStrategy):
     """Strategy for general conversation"""
     
@@ -331,8 +349,8 @@ class ConversationResponseStrategy(ResponseStrategy):
             "That's interesting! Tell me more about what you're thinking.",
             "I'd love to hear your perspective on that.",
             "That's a great point. What else is on your mind?",
-            "Thanks for sharing! How does that make you feel?",
-            "I'm here to listen. What would you like to discuss next?"
+            "I'm here to help! What would you like to know or discuss?",
+            "I'm here to listen. What would you like to talk about next?"
         ]
     
     def generate_response(self, intent: Intent, context: Optional[ConversationContext] = None) -> Response:
@@ -368,6 +386,7 @@ class ResponseGenerator:
             IntentType.HELP_REQUEST: HelpResponseStrategy(),
             IntentType.PRODUCT_INQUIRY: ProductInquiryResponseStrategy(),
             IntentType.SPORTS_TOPIC: SportsResponseStrategy(),
+            IntentType.IDENTITY: IdentityResponseStrategy(),
             IntentType.CONVERSATION: ConversationResponseStrategy()
         }
         self.fallback_strategy = ConversationResponseStrategy()

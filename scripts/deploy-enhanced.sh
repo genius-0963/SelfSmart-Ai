@@ -48,7 +48,7 @@ check_prerequisites() {
     fi
     
     # Check Docker Compose
-    if ! command -v docker-compose &> /dev/null; then
+    if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
         log_error "Docker Compose is not installed"
         exit 1
     fi
@@ -144,11 +144,11 @@ EOF
     
     # Stop existing services
     log_info "Stopping existing services..."
-    docker-compose -f docker-compose.production.yml down || true
+    docker compose -f docker-compose.production.yml down || true
     
     # Start services
     log_info "Starting services..."
-    docker-compose -f docker-compose.production.yml up -d
+    docker compose -f docker-compose.production.yml up -d
     
     log_success "Services deployed successfully"
 }
@@ -245,10 +245,10 @@ show_summary() {
     echo "   Grafana: http://localhost:3000 (admin/admin123)"
     echo
     echo "🔧 Management Commands:"
-    echo "   View logs: docker-compose -f docker-compose.production.yml logs -f"
-    echo "   Stop services: docker-compose -f docker-compose.production.yml down"
-    echo "   Restart services: docker-compose -f docker-compose.production.yml restart"
-    echo "   Check status: docker-compose -f docker-compose.production.yml ps"
+    echo "   View logs: docker compose -f docker-compose.production.yml logs -f"
+    echo "   Stop services: docker compose -f docker-compose.production.yml down"
+    echo "   Restart services: docker compose -f docker-compose.production.yml restart"
+    echo "   Check status: docker compose -f docker-compose.production.yml ps"
     echo
     echo "📈 Monitoring:"
     echo "   System metrics: http://localhost:9090"
@@ -304,16 +304,16 @@ case "${1:-deploy}" in
         cleanup
         ;;
     "logs")
-        docker-compose -f docker-compose.production.yml logs -f
+        docker compose -f docker-compose.production.yml logs -f
         ;;
     "stop")
-        docker-compose -f docker-compose.production.yml down
+        docker compose -f docker-compose.production.yml down
         ;;
     "restart")
-        docker-compose -f docker-compose.production.yml restart
+        docker compose -f docker-compose.production.yml restart
         ;;
     "status")
-        docker-compose -f docker-compose.production.yml ps
+        docker compose -f docker-compose.production.yml ps
         ;;
     *)
         echo "Usage: $0 {build|push|deploy|health|cleanup|logs|stop|restart|status}"

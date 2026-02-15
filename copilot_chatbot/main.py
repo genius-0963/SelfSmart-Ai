@@ -200,13 +200,18 @@ class ChatRequest(BaseModel):
 async def chat(req: ChatRequest):
     """
     Chat with the AI Copilot.
-    Accepts JSON body: { "query": "...", "session_id": "optional" }
-    Uses Phase 1 NLU (intent, sports, products) when available; otherwise RAG/fallback.
+    GPT-like: Uses LLM (DeepSeek/OpenAI) when available for all queries.
+    Falls back to Phase 1 NLU only when no API key is configured.
     """
     query = req.query or ""
     session_id = req.session_id or "default"
     try:
-        # Phase 1 NLU: use intent + response + conversation flow when available and confident
+        # Use LLM (GPT-like) when available - handle all queries naturally
+        if hasattr(app.state, 'rag_pipeline') and app.state.rag_pipeline is not None:
+            response = await app.state.rag_pipeline.process_query(query, session_id)
+            return response
+
+        # No LLM: fallback to Phase 1 NLU (greetings, help, products, sports)
         if (
             getattr(app.state, "conversation_manager", None)
             and getattr(app.state, "intent_engine", None)
@@ -214,7 +219,6 @@ async def chat(req: ChatRequest):
         ):
             try:
                 intent = app.state.intent_engine.process_input(query)
-                # Use Phase 1 for greeting, help, product_inquiry, sports_topic (and optionally general_question)
                 if intent.confidence >= 0.5 and intent.intent_type != IntentType.UNKNOWN:
                     session_id_inner = session_id or "default"
                     session = app.state.conversation_manager.get_session(session_id_inner)
@@ -238,21 +242,15 @@ async def chat(req: ChatRequest):
                     }
             except Exception as nlu_err:
                 logger.debug(f"Phase 1 NLU path skipped: {nlu_err}")
-        
-        if not hasattr(app.state, 'rag_pipeline') or app.state.rag_pipeline is None:
-            # Fallback response when LLM is not configured
-            return {
-                "response": "⚠️ No API key configured. Please set OPENAI_API_KEY or DEEPSEEK_API_KEY in your .env file to enable chat features.\n\nFor now, I can help you with:\n- Product searches\n- Basic information\n\nTo enable full chat capabilities, add your OpenAI API key to the .env file and restart the server.",
-                "session_id": session_id,
-                "query": query,
-                "context": [],
-                "model": "fallback"
-            }
-        
-        # Process query through RAG pipeline
-        response = await app.state.rag_pipeline.process_query(query, session_id)
-        
-        return response
+
+        # No LLM and Phase 1 didn't match
+        return {
+            "response": "⚠️ No API key configured. Please set OPENAI_API_KEY or DEEPSEEK_API_KEY in your .env file to enable full GPT-like chat.\n\nFor now, I can help with: greetings, product recommendations, and sports topics.",
+            "session_id": session_id,
+            "query": query,
+            "context": [],
+            "model": "fallback"
+        }
         
     except Exception as e:
         logger.error(f"Chat processing failed: {e}")

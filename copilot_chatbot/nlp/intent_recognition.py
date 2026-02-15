@@ -24,6 +24,7 @@ class IntentType(Enum):
     PRODUCT_INQUIRY = "product_inquiry"
     SPORTS_TOPIC = "sports_topic"
     GENERAL_QUESTION = "general_question"
+    IDENTITY = "identity"  # who are you, what is your name
     CONVERSATION = "conversation"
     UNKNOWN = "unknown"
 
@@ -146,6 +147,11 @@ class RuleBasedIntentRecognizer(IntentRecognizer):
                 r'\b(what|where|when|why|how|who|which)\b',
                 r'\b(tell me about|explain|describe|define)\b',
                 r'\?\s*$'  # Ends with question mark
+            ],
+            IntentType.IDENTITY: [
+                r'\b(who are you|what is your name|whats your name|what\'s your name|your name)\b',
+                r'\b(what are you|identify yourself|introduce yourself)\b',
+                r'\b(are you (a )?bot|are you (an )?ai|are you human)\b'
             ]
         }
     
