@@ -5,8 +5,6 @@
 Your **real Amazon API key** has been successfully integrated into the SmartShelf AI chat system!
 
 ## 🔑 **API Configuration:**
-
-**Your API Key:** `d4cf23a971msh75af80bfc558d43p1403eejsn6eafeb67936b`
 **API Host:** `real-time-amazon-data.p.rapidapi.com`
 **Status:** ✅ Configured and Ready
 
